@@ -44,7 +44,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/tokenResponse'
-  /updatePost/{uid}/{token}:
+  /updatePost/{token}:
     post:
       operationId: updatePost
       summary: update a existed post that already have been in wp
@@ -92,10 +92,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/addPostResponse'
-  /findPlugin/{uid}/{token}/{keyword}:
+  /findPlugin/{token}/{keyword}:
     get:
       operationId: findPlugin
-      summary: find a wp plugin using specific keyword
+      summary: find and suggest wp plugins using specific keyword
       parameters:
       - in: path
         name: token
@@ -152,7 +152,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/getListResponse'
                 
-  /deletePost/{uid}/{token}/{postId}:
+  /deletePost/{token}/{postId}:
     post:
       operationId: deletePost
       summary: delete specifc post

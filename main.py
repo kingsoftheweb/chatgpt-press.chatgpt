@@ -90,6 +90,7 @@ async def auth_to_wp():
 async def get_token_from_chat():
     uid = indigest(request.args.get('uid'))["uid"]
     inConf = _CONF.get(uid)
+    if(not inConf): return {"error":"No login information","action":"please go to "+_LOGIN_LINK+uid+" and login"}
     status = inConf.get("status")
     token = inConf.get("token")
     if(status and not token): return {"error":"No token","action":"please go to "+_LOGIN_LINK+uid+" and login"}
@@ -185,7 +186,7 @@ async def add_new_post(token):
 
 
 
-@app.post("/updatePost/<string:uid>/<string:token>")
+@app.post("/updatePost/<string:token>")
 @logged()
 async def update_existed_post(uid,token):
     url = "https://chatgpt.futrx.ca/wp-json/wp/v2/posts/"+request.args.get('post_id')
@@ -196,7 +197,7 @@ async def update_existed_post(uid,token):
     r = requests.post(url, data = data, auth = (d["user"],d["pass"]))
     return quart.Response(response=json.dumps(r.json()), status=200)
 
-@app.get("/deletePost/<string:uid>/<string:token>/<string:postId>")
+@app.get("/deletePost/<string:token>/<string:postId>")
 @logged()
 async def delete_post(uid,token,postId):
     d = jwt.decode(token, _SECRET, verify_exp=True, algorithms=["HS256"])
@@ -205,7 +206,7 @@ async def delete_post(uid,token,postId):
     return quart.Response(response=json.dumps(r.json()), status=200)
 
 
-@app.get("/findPlugin/<string:uid>/<string:token>/<string:keyword>")
+@app.get("/findPlugin/<string:token>/<string:keyword>")
 @logged()
 async def find_plugin(uid,token,keyword):
     url = "https://chatgpt.futrx.ca/wp-json/chatgptpress/v1/plugins/search"

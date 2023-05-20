@@ -1,0 +1,18 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "Futrx",
+  "name_for_model": "Futrx",
+  "description_for_human": "Plugin for managing a wordpress site, you can add, get, remove WP posts and plugins.",
+  "description_for_model": "Plugin for managing a wordpress site, you can add, get, remove WP posts and plugins. Adding post content should be good html code for json that should not occur any parse error.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "http://localhost:5003/openapi.yaml",
+    "is_user_authenticated": false
+  },
+  "logo_url": "http://localhost:5003/logo.png",
+  "contact_email": "legal@example.com",
+  "legal_info_url": "http://example.com/legal"
+}
