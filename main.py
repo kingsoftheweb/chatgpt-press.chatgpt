@@ -26,7 +26,12 @@ def genAuth():
         }
 
 def indigest(token):
-    return jwt.decode(token, _SECRET, verify_exp=True, algorithms=["HS256"])
+    try:
+        return jwt.decode(token, _SECRET, verify_exp=True, algorithms=["HS256"])
+    except:
+        error = genAuth()
+        error["error"]="The request session has been expired."
+        return error
 
 def logged():
     def wrapper(func):
@@ -41,9 +46,13 @@ def logged():
                 if(uid and usr and password):
                     print("ok")
                 else:
-                    return genAuth()
+                    error = genAuth()
+                    error["error"]="The request session has been expired."
+                    return error
             except:
-                return genAuth()
+                error = genAuth()
+                error["error"]="The request session has been expired."
+                return error
             return await func(*args, **kwargs)
         return wrapped
     return wrapper
