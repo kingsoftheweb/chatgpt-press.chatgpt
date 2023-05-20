@@ -123,7 +123,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/findPluginResponse'
-  /findPlugin/{token}/{slug}:
+  /installPlugin/{token}/{slug}:
     post:
       operationId: installPlugin
       summary: install one plugin from the suggested list
@@ -147,7 +147,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/installPluginResponse'
-  /debug/{token}/:
+  /debug/{token}:
     post:
       operationId: debugWP
       summary: get issues, error and warnings from wp debug

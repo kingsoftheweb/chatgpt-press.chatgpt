@@ -70,12 +70,13 @@ async def auth_to_wp():
         auth = (d["user"],d["password"])
         r = requests.post(url, auth = auth).json()
         if(r["id"]):status="Login successfull, please go back to GPT conversation."
+        print(r["id"])
         json_payload = {
             "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=85),
             "user": d["user"], 
             "pass":d["password"],
             "uid":uid,
-            "author":r.get("id")
+            "author":str(r["id"])
         }
         _CONF[uid]["token"]=jwt.encode(json_payload, _SECRET, algorithm="HS256")
     except:
@@ -177,7 +178,7 @@ async def add_new_post(token):
         "title":d.get("title"),
         "content":d.get("content"),
         "status":"draft",
-        "author":d.get("author")
+        "author":int(d.get("author"))
     }
     
     if(d.get("postType")):data["type"]=d["postType"]
@@ -244,7 +245,7 @@ async def install_plugin(token,slug):
 async def find_bug(token):
     url = "https://chatgpt.futrx.ca/wp-json/chatgptpress/v1/debuglog/debug"
     d = indigest(token)
-    r = requests.get(url, json={"keyword":keyword}, auth = (d["user"],d["pass"]))
+    r = requests.get(url, auth = (d["user"],d["pass"]))
     pList = r.json()
     resList = []
     counter = 0
