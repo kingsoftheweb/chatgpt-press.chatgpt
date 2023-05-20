@@ -1,0 +1,246 @@
+openapi: 3.0.1
+info:
+  title: Futrx Plugin
+  description: Wordpress management tool that will CRUD your wordpress posts.
+  version: 'v1'
+servers:
+  - url: http://localhost:5003
+paths:
+  /login:
+    post:
+      operationId: loginAuth
+      summary: get auth uid from here
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                response:
+                  type: object
+                  description: you will get auth uid and unique link to login
+                  properties:
+                    uid:
+                      type: string
+                      description: unique id that will be used to prove auth
+                    link:
+                      type: string
+                      description: unique link to login wp
+  /token:
+    post:
+      operationId: getToken
+      summary: Get the auth token to request protected URL
+      parameters:
+        - name: uid
+          in: query
+          description: the uid you already got
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/tokenResponse'
+  /updatePost/{uid}/{token}:
+    post:
+      operationId: updatePost
+      summary: update a existed post that already have been in wp
+      parameters:
+        - name: title
+          in: query
+          description: new and updated title for the post that will be replaced
+          required: true
+          schema:
+            type: string
+        - name: post_id
+          in: query
+          description: unique id number for the specific post that is needed to change
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/updatePostResponse'
+  /addPost/{token}:
+    post:
+      operationId: addPost
+      summary: add a new post to wp
+      parameters:
+      - in: path
+        name: token
+        schema:
+            type: string
+        required: true
+        description: use the token you already get after login
+      requestBody:
+        required: true
+        content: 
+          application/json:
+            schema:
+              $ref: '#/components/schemas/addPostData'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/addPostResponse'
+  /findPlugin/{uid}/{token}/{keyword}:
+    get:
+      operationId: findPlugin
+      summary: find a wp plugin using specific keyword
+      parameters:
+      - in: path
+        name: token
+        schema:
+            type: string
+        required: false
+        description: the auth token to add a new post.
+      - in: path
+        name: uid
+        schema:
+            type: string
+        required: true
+        description: timestap milisecond and request using it for all future use..
+      - in: path
+        name: keyword
+        schema:
+            type: string
+        required: true
+        description: the keyword to search the specific wp plugin.
+  /posts:
+    get:
+      operationId: getPosts
+      summary: Get the list of posts
+      parameters:
+        - name: afterDate
+          in: query
+          description: get post after specific date
+          required: false
+          schema:
+            type: string
+        - name: beforeDate
+          in: query
+          description: get post before specific date
+          required: false
+          schema:
+            type: string
+        - name: postType
+          in: query
+          description: get post only from specific type
+          required: false
+          schema:
+            type: string
+        - name: postId
+          in: query
+          description: get one post with specific post Id
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getListResponse'
+                
+  /deletePost/{uid}/{token}/{postId}:
+    post:
+      operationId: deletePost
+      summary: delete specifc post
+      parameters:
+        - in: path
+          name: postId
+          schema:
+              type: string
+          required: true
+          description: specific post id that will be removed
+        - in: path
+          name: token
+          schema:
+              type: string
+          required: false
+          description: the auth token to add a new post.
+        - in: path
+          name: uid
+          schema:
+              type: string
+          required: true
+          description: timestap milisecond and request using it for all future use..
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/deletePostResponse'
+
+components:
+  schemas:
+    tokenResponse:
+      type: object
+      properties:
+        token:
+          type: string
+    addPostData:
+      type: object
+      properties:
+        postType:
+          type: string
+          description: Specific type for the wp post
+          required: false
+        title:
+          type: string
+          description: Title for the new post that will be added
+        content:
+          type: string
+          description: HTML format post body that will be added as a new post
+    updatePostResponse:
+      type: object
+      properties:
+        list:
+          type: array
+          items:
+            postDetails: string
+          description: The post has been updated successfully.
+    addPostResponse:
+      type: object
+      properties:
+        list:
+          type: array
+          items:
+            postDetails: string
+          description: Post details that have been added successfully.
+    getListResponse:
+      type: object
+      properties:
+        list:
+          type: array
+          items:
+            post: string
+          description: The list of posts.
+    deletePostResponse:
+      type: object
+      properties:
+        description:
+          type: object
+    findPluginResponse:
+      type: object
+      properties:
+        action:
+          type: string
+          description: "Find best plugin action"
+        plugins:
+            type: array
+            items:
+              plugin:
+                type: object
+            description: the plugins list that should be analysis to find the best plugin.
