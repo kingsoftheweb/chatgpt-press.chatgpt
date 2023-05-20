@@ -74,7 +74,8 @@ async def auth_to_wp():
             "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=85),
             "user": d["user"], 
             "pass":d["password"],
-            "uid":uid
+            "uid":uid,
+            "author":r.get("id")
         }
         _CONF[uid]["token"]=jwt.encode(json_payload, _SECRET, algorithm="HS256")
     except:
@@ -167,7 +168,7 @@ async def add_new_post(token):
     url = "https://chatgpt.futrx.ca/wp-json/wp/v2/posts"
     raw_data = (await request.body)
     data = {}
-    d = {"title":"","content":""}
+    d = {"title":"","content":"","author":""}
     try:
         d = literal_eval(raw_data.decode('utf-8'))
     except:
@@ -176,7 +177,7 @@ async def add_new_post(token):
         "title":d.get("title"),
         "content":d.get("content"),
         "status":"draft",
-        "author":1
+        "author":d.get("author")
     }
     
     if(d.get("postType")):data["type"]=d["postType"]
