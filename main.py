@@ -22,7 +22,7 @@ def genAuth():
     sid = jwt.encode({"uid":uid,"exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=85)}, _SECRET, algorithm="HS256")
     return {
         "uid":sid,
-        "action":"You are not autorized. Please go to "+_LOGIN_LINK+uid+" to login"
+        "action":"You need to login manually. chatGPT will show login link: "+_LOGIN_LINK+uid
         }
 
 def indigest(token):
@@ -88,12 +88,16 @@ async def auth_to_wp():
 
 @app.post("/token")
 async def get_token_from_chat():
-    uid = indigest(request.args.get('uid'))["uid"]
+    uid = ""
+    try:
+        uid = indigest(request.args.get('uid'))["uid"]
+    except:
+        return  {"error":"login link expired","action":"Get a new login link from /login"}
     inConf = _CONF.get(uid)
-    if(not inConf): return {"error":"No login information","action":"please go to "+_LOGIN_LINK+uid+" and login"}
+    if(not inConf): return  {"error":"login link expired","action":"Get a new login link from /login"}
     status = inConf.get("status")
     token = inConf.get("token")
-    if(status and not token): return {"error":"No token","action":"please go to "+_LOGIN_LINK+uid+" and login"}
+    if(status and not token): return genAuth()
     if(status and token):return {"token":inConf["token"]}
     if(not status): return {"error":"Not registed yet"}
     return genAuth()
@@ -188,7 +192,7 @@ async def add_new_post(token):
 
 @app.post("/updatePost/<string:token>")
 @logged()
-async def update_existed_post(uid,token):
+async def update_existed_post(token):
     url = "https://chatgpt.futrx.ca/wp-json/wp/v2/posts/"+request.args.get('post_id')
     data = {
         "title":request.args.get('title')
@@ -197,21 +201,20 @@ async def update_existed_post(uid,token):
     r = requests.post(url, data = data, auth = (d["user"],d["pass"]))
     return quart.Response(response=json.dumps(r.json()), status=200)
 
-@app.get("/deletePost/<string:token>/<string:postId>")
+@app.post("/deletePost/<string:token>/<string:postId>")
 @logged()
-async def delete_post(uid,token,postId):
+async def delete_post(token,postId):
     d = jwt.decode(token, _SECRET, verify_exp=True, algorithms=["HS256"])
     url = "https://chatgpt.futrx.ca/wp-json/wp/v2/posts/"+postId
     r = requests.delete(url, auth = (d["user"],d["pass"]))
     return quart.Response(response=json.dumps(r.json()), status=200)
 
 
-@app.get("/findPlugin/<string:token>/<string:keyword>")
+@app.post("/findPlugin/<string:token>/<string:keyword>")
 @logged()
-async def find_plugin(uid,token,keyword):
+async def find_plugin(token,keyword):
     url = "https://chatgpt.futrx.ca/wp-json/chatgptpress/v1/plugins/search"
-    d = jwt.decode(token, _SECRET, verify_exp=True, algorithms=["HS256"])
-    print(keyword)
+    d = indigest(token)
     r = requests.post(url, json={"keyword":keyword}, auth = (d["user"],d["pass"]))
     pList = r.json()
     resList = []
@@ -221,8 +224,39 @@ async def find_plugin(uid,token,keyword):
         p.pop("short_description")
         resList.append(p)
         if(counter>=50): break
-    res = {"action":"Find maximum BEST 5 plugins from the given list", "plugins":resList}
+    res = {"action":"chatGPT will find and suggest best plugin to install as user's expectation and comapre among them and", "plugins":resList}
     return quart.Response(response=json.dumps(res), status=200)
+
+
+@app.post("/installPlugin/<string:token>/<string:slug>")
+@logged()
+async def install_plugin(token,slug):
+    url = "https://chatgpt.futrx.ca/wp-json/chatgptpress/v1/plugins/install"
+    d = indigest(token)
+    r = requests.post(url, json={"slug":slug}, auth = (d["user"],d["pass"]))
+    res = r.json()
+    return quart.Response(response=json.dumps(res), status=200)
+
+
+@app.post("/debug/<string:token>")
+@logged()
+async def find_bug(token):
+    url = "https://chatgpt.futrx.ca/wp-json/chatgptpress/v1/debuglog/debug"
+    d = indigest(token)
+    r = requests.get(url, json={"keyword":keyword}, auth = (d["user"],d["pass"]))
+    pList = r.json()
+    resList = []
+    counter = 0
+    for p in pList:
+        counter+=1
+        p.pop("date")
+        p.pop("time")
+        p.pop("timeZone")
+        resList.append(p)
+        if(counter>=50): break
+    res = {"action":"chatGPT will suggest how to fix this errors", "plugins":resList}
+    return quart.Response(response=json.dumps(res), status=200)
+
 
 @app.get("/logo.png")
 async def plugin_logo():

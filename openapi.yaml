@@ -25,7 +25,7 @@ paths:
                       description: unique id that will be used to prove auth
                     link:
                       type: string
-                      description: unique link to login wp
+                      description: unique link to login. go and login manually.
   /token:
     post:
       operationId: getToken
@@ -49,6 +49,12 @@ paths:
       operationId: updatePost
       summary: update a existed post that already have been in wp
       parameters:
+        - in: path
+          name: token
+          schema:
+            type: string
+          required: true
+          description: use the token you already got after login from /token endpoint
         - name: title
           in: query
           description: new and updated title for the post that will be replaced
@@ -61,6 +67,7 @@ paths:
           required: true
           schema:
             type: number
+        
       responses:
         "200":
           description: OK
@@ -78,7 +85,7 @@ paths:
         schema:
             type: string
         required: true
-        description: use the token you already get after login
+        description: use the token you already got after login from /token endpoint
       requestBody:
         required: true
         content: 
@@ -93,7 +100,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/addPostResponse'
   /findPlugin/{token}/{keyword}:
-    get:
+    post:
       operationId: findPlugin
       summary: find and suggest wp plugins using specific keyword
       parameters:
@@ -101,20 +108,64 @@ paths:
         name: token
         schema:
             type: string
-        required: false
-        description: the auth token to add a new post.
-      - in: path
-        name: uid
-        schema:
-            type: string
         required: true
-        description: timestap milisecond and request using it for all future use..
+        description: use the token you already got after login from /token endpoint
       - in: path
         name: keyword
         schema:
             type: string
         required: true
         description: the keyword to search the specific wp plugin.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/findPluginResponse'
+  /findPlugin/{token}/{slug}:
+    post:
+      operationId: installPlugin
+      summary: install one plugin from the suggested list
+      parameters:
+      - in: path
+        name: token
+        schema:
+            type: string
+        required: true
+        description: use the token you already got after login from /token endpoint
+      - in: path
+        name: slug
+        schema:
+            type: string
+        required: true
+        description: the plugin slug that will be installed.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/installPluginResponse'
+  /debug/{token}/:
+    post:
+      operationId: debugWP
+      summary: get issues, error and warnings from wp debug
+      parameters:
+      - in: path
+        name: token
+        schema:
+            type: string
+        required: true
+        description: use the token you already got after login from /token endpoint
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/debugResponse'
+
   /posts:
     get:
       operationId: getPosts
@@ -167,14 +218,8 @@ paths:
           name: token
           schema:
               type: string
-          required: false
-          description: the auth token to add a new post.
-        - in: path
-          name: uid
-          schema:
-              type: string
           required: true
-          description: timestap milisecond and request using it for all future use..
+          description: use the token you already got after login from /token endpoint
       responses:
         "200":
           description: OK
@@ -237,10 +282,28 @@ components:
       properties:
         action:
           type: string
-          description: "Find best plugin action"
+          description: "find the best plugins and compare and suggest which one to install"
         plugins:
             type: array
             items:
               plugin:
                 type: object
-            description: the plugins list that should be analysis to find the best plugin.
+            description: the plugins list that should be analysis and chatGPT will suggest the best one to install.
+    installPluginResponse:
+      type: object
+      properties:
+        result:
+          type: string
+          description: "plugin install result"
+    debugResponse:
+      type: object
+      properties:
+        action:
+          type: string
+          description: "Please find the way how to solve the issue"
+        plugins:
+            type: array
+            items:
+              plugin:
+                type: object
+            description: the warnings and error from WP debug.
