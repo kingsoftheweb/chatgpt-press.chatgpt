@@ -16,7 +16,7 @@ paths:
           schema:
             type: string
           required: true
-          description: please provide the wp site address that you want to manage
+          description: chatGPT must not generate it and must be taken from user
       responses:
         "200":
           description: OK

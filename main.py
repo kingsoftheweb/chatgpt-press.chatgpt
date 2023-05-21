@@ -10,13 +10,20 @@ from dateutil.parser import parse
 import jwt
 from functools import wraps
 import uuid
+import re
 
 app = quart_cors.cors(quart.Quart(__name__), allow_origin="https://chat.openai.com")
 _SECRET = "THIS IS SUPER SECRET"
 _CONF = {}
 
-def genAuth(site):
+def genAuth(site=False):
+    if(not site):return noSiteException()
     uid = str(uuid.uuid1())
+    try:
+        r = requests.get(site)
+        if(r.status_code != 200):  return {"error":"Please check your web address. It seems invalid."}
+    except:
+        return {"error":"Please check your web address. It seems invalid."}
     if(requests.get(site+"/authenticate-chatgptpress").status_code==200):
         login_url = site+"/authenticate-chatgptpress?redirect_to=http://localhost:5003/login/"+uid
         _CONF[uid]={"status":True,"site":site}
@@ -33,6 +40,15 @@ def indigest(token):
         return jwt.decode(token, _SECRET, verify_exp=True, algorithms=["HS256"])
     except:
         return {"error":"The request session has been expired. please give your wp site address to start again."}
+
+def noSiteException():
+    return {"error": "provide you wp site address to continue."}
+
+def validSite(site):
+    site = site.replace("https://","")
+    site = site.replace("http://","")
+    site = "https://"+site
+    return site
 
 def logged():
     def wrapper(func):
@@ -114,7 +130,7 @@ async def get_token_from_chat():
 
 @app.post("/login")
 async def login_to_chat():
-    return genAuth(request.args.get("site"))
+    return genAuth(validSite(request.args.get("site")))
 
 @app.get("/login/<string:uid>")
 async def login_to_site(uid):
