@@ -12,12 +12,13 @@ from functools import wraps
 import uuid
 import re
 
+from globals import _SECRET, _CONF
+
 from src.Posts import Posts
 from src.Plugins import Plugins
 
 app = quart_cors.cors(quart.Quart(__name__), allow_origin="https://chat.openai.com")
-_SECRET = "THIS IS SUPER SECRET"
-_CONF = {}
+
 
 def genAuth(site=False):
     if(not site):return noSiteException()
