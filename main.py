@@ -183,11 +183,12 @@ async def add_new_post(token):
         d = literal_eval(raw_data.decode('utf-8'))
     except:
         print("raw_data Error")
+    author = indigest(token)["author"]
     data = {
         "title":d.get("title"),
         "content":d.get("content"),
         "status":"draft",
-        "author":int(d.get("author"))
+        "author":int(author)
     }
     
     if(d.get("postType")):data["type"]=d["postType"]
