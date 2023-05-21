@@ -16,6 +16,7 @@ from globals import _SECRET, _CONF
 
 from src.Posts import Posts
 from src.Plugins import Plugins
+from src.Debug import Debug
 
 app = quart_cors.cors(quart.Quart(__name__), allow_origin="https://chat.openai.com")
 
@@ -200,24 +201,14 @@ async def install_plugin(token, slug):
         return quart.Response(response=error_message, status=500)
 
 
+########################
+# DEBUG ################
+########################
 @app.post("/debug/<string:token>")
 @logged()
-async def find_bug(token):
-    token = indigest(token)
-    url = token["site"] + "/wp-json/chatgptpress/v1/debuglog/debug"
-    r = requests.get(url, auth=(token["user"], token["pass"]))
-    pList = r.json()
-    resList = []
-    counter = 0
-    for p in pList:
-        counter += 1
-        p.pop("date")
-        p.pop("time")
-        p.pop("timeZone")
-        resList.append(p)
-        if (counter >= 50): break
-    res = {"action": "chatGPT will suggest how to fix this errors", "plugins": resList}
-    return quart.Response(response=json.dumps(res), status=200)
+async def debug_list(token):
+    res = Debug().list(token)
+    return quart.Response(response=res, status=200)
 
 
 @app.get("/logo.png")
