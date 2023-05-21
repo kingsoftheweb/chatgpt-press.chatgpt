@@ -1,20 +1,13 @@
 import json
-
 import quart
 import quart_cors
-from quart import request, redirect
-import requests
-from ast import literal_eval
-import datetime
-from dateutil.parser import parse
-import jwt
+from quart import request
 from functools import wraps
-import uuid
-import re
 
-from globals import _SECRET, _CONF
-from src.helpers import indigest, noSiteException
+from globals import _CONF
+from src.helpers import indigest, validate_site
 
+from src.Authenticate import Authenticate
 from src.Posts import Posts
 from src.Plugins import Plugins
 from src.Debug import Debug
@@ -47,33 +40,36 @@ async def openapi_spec():
         return quart.Response(text, mimetype="text/yaml")
 
 
+########################
+# Authentication #######
+########################
+@app.post("/token")
+async def get_token_from_chat():
+    return Authenticate().get_token()
 
-def genAuth(site=False):
-    if (not site): return noSiteException()
-    uid = str(uuid.uuid1())
-    try:
-        r = requests.get(site)
-        if (r.status_code != 200):  return {"error": "Please check your web address. It seems invalid."}
-    except:
-        return {"error": "Please check your web address. It seems invalid."}
-    if (requests.get(site + "/authenticate-chatgptpress").status_code == 200):
-        login_url = site + "/authenticate-chatgptpress?redirect_to=http://localhost:5003/login/" + uid
-        _CONF[uid] = {"status": True, "site": site}
-        sid = jwt.encode({"uid": uid, "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=85)}, _SECRET,
-                         algorithm="HS256")
-        return {
-            "uid": sid,
-            "action": "You need to login manually. chatGPT will show login link: " + login_url
-        }
+
+@app.post("/login")
+async def login_to_chat():
+    return Authenticate().start(validate_site(request.args.get("site")))
+
+
+@app.get("/login/<string:uid>")
+async def login_to_wordpress(uid):
+    await Authenticate().login_to_wordpress(uid)
+    if _CONF.get(uid):
+        return """
+            <script>
+                alert("Login successfull. Please go back to chatGPT and continue your conversation.");
+                window.close();
+            </script>
+        """
     else:
-        return {
-            "error": "chatgptpress plugin not found in your website. please install the plugin and come back again."}
-
-def validSite(site):
-    site = site.replace("https://", "")
-    site = site.replace("http://", "")
-    site = "https://" + site
-    return site
+        return """
+        <script>
+                alert("Something is wrong!!! Please try again later...");
+                window.close();
+            </script>
+        """
 
 
 def logged():
@@ -99,70 +95,6 @@ def logged():
         return wrapped
 
     return wrapper
-
-
-@app.post("/token")
-async def get_token_from_chat():
-    uid = ""
-    try:
-        uid = indigest(request.args.get('uid'))["uid"]
-    except:
-        return {"error": "login link expired", "action": "Get a new login link from /login"}
-    inConf = _CONF.get(uid)
-    if (not inConf): return {"error": "login link expired", "action": "Get a new login link from /login"}
-    status = inConf.get("status")
-    token = inConf.get("token")
-    if (status and not token): return genAuth()
-    if (status and token): return {"token": inConf["token"]}
-    if (not status): return {"error": "Not registed yet"}
-    return genAuth()
-
-
-@app.post("/login")
-async def login_to_chat():
-    return genAuth(validSite(request.args.get("site")))
-
-
-@app.get("/login/<string:uid>")
-async def login_to_site(uid):
-    url = "/wp-json/wp/v2/users/me"
-    if not _CONF.get(uid): return "Bad or illegal Request"
-    try:
-        auth = (request.args.get("username"), request.args.get("appPassword"))
-        r = requests.post(_CONF.get(uid)["site"] + url, auth=auth).json()
-        if r["id"]: status = "Login successfull, please go back to GPT conversation."
-        print(r["id"])
-        json_payload = {
-            "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=85),
-            "site": _CONF.get(uid)["site"],
-            "user": request.args.get("username"),
-            "pass": request.args.get("appPassword"),
-            "uid": uid,
-            "author": str(r["id"])
-        }
-        _CONF[uid]["token"] = jwt.encode(json_payload, _SECRET, algorithm="HS256")
-    except:
-        print("error login")
-        return """
-            <script>
-                alert("Something is wrong!!! Please try again later...");
-                window.close();
-            </script>
-        """
-    if _CONF.get(uid):
-        return """
-            <script>
-                alert("Login successfull. Please go back to chatGPT and continue your conversation.");
-                window.close();
-            </script>
-        """
-    else:
-        return """
-        <script>
-                alert("Something is wrong!!! Please try again later...");
-                window.close();
-            </script>
-        """
 
 
 ########################
