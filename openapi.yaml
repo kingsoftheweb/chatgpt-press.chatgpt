@@ -9,7 +9,14 @@ paths:
   /login:
     post:
       operationId: loginAuth
-      summary: get auth uid from here
+      summary: get auth uid from here. Must provide the wp site address that you want to manage
+      parameters:
+        - in: query
+          name: site
+          schema:
+            type: string
+          required: true
+          description: please provide the wp site address that you want to manage
       responses:
         "200":
           description: OK
@@ -166,11 +173,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/debugResponse'
 
-  /posts:
+  /posts/{token}:
     get:
       operationId: getPosts
       summary: Get the list of posts
       parameters:
+        - in: path
+          name: token
+          schema:
+            type: string
+          required: true
+          description: use the token you already got after login from /token endpoint
         - name: afterDate
           in: query
           description: get post after specific date
