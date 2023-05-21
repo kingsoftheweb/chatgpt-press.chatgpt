@@ -21,7 +21,7 @@ class Posts:
         - Deleting an existing post 'delete()'
     """
 
-    #TODO; Add support for other post types (example 'recipe' post type)
+    # TODO Add support for other post types (example 'recipe' post type)
     async def get_posts(self, token):
         token = indigest(token)
         if token.get("error"): return token

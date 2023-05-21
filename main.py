@@ -110,11 +110,11 @@ async def login_to_chat():
 @app.get("/login/<string:uid>")
 async def login_to_site(uid):
     url = "/wp-json/wp/v2/users/me"
-    if (not _CONF.get(uid)): return "Bad or illegal Request"
+    if not _CONF.get(uid): return "Bad or illegal Request"
     try:
         auth = (request.args.get("username"), request.args.get("appPassword"))
         r = requests.post(_CONF.get(uid)["site"] + url, auth=auth).json()
-        if (r["id"]): status = "Login successfull, please go back to GPT conversation."
+        if r["id"]: status = "Login successfull, please go back to GPT conversation."
         print(r["id"])
         json_payload = {
             "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=85),
@@ -192,8 +192,12 @@ async def find_plugin(token, keyword):
 @app.post("/installPlugin/<string:token>/<string:slug>")
 @logged()
 async def install_plugin(token, slug):
-    res = await Plugins().install(token, slug)
-    return quart.Response(response=res, status=200)
+    try:
+        res = await Plugins().install(token, slug)
+        return quart.Response(response=res, status=200)
+    except json.decoder.JSONDecodeError:
+        error_message = "Error: Failed to parse JSON response"
+        return quart.Response(response=error_message, status=500)
 
 
 @app.post("/debug/<string:token>")
