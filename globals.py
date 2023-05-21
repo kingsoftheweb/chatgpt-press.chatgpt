@@ -1,0 +1,2 @@
+_SECRET = "THIS IS SUPER SECRET"
+_CONF = {}

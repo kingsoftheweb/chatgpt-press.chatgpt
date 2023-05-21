@@ -12,6 +12,9 @@ from functools import wraps
 import uuid
 import re
 
+from src.Posts import Posts
+from src.Plugins import Plugins
+
 app = quart_cors.cors(quart.Quart(__name__), allow_origin="https://chat.openai.com")
 _SECRET = "THIS IS SUPER SECRET"
 _CONF = {}
@@ -69,47 +72,6 @@ def logged():
             return await func(*args, **kwargs)
         return wrapped
     return wrapper
-
-
- 
-
-#("futrx","D6Jt ZbFV yrJ8 QI7w uYIy VQMS")
-# @app.post("/auth")
-# async def auth_to_wp():
-#     url = "https://chatgpt.futrx.ca/wp-json/wp/v2/users/me"
-#     global _AUTH
-#     _AUTH = (request.args.get('user'),request.args.get('password'))
-#     r = requests.post(url, auth = _AUTH)
-#     return quart.Response(response=json.dumps(r.json()), status=200)
-
-
-# @app.post("/auth")
-# async def auth_to_wp():
-#     d = await request.get_data()
-#     d = json.loads(d.decode("utf-8"))
-#     url = "https://chatgpt.futrx.ca/wp-json/wp/v2/users/me"
-#     uid = d["uid"]
-#     if(not _CONF.get(uid)):return "Bad or illegal Request"
-#     try:
-#         auth = (d["user"],d["password"])
-#         r = requests.post(url, auth = auth).json()
-#         if(r["id"]):status="Login successfull, please go back to GPT conversation."
-#         print(r["id"])
-#         json_payload = {
-#             "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=85),
-#             "user": d["user"], 
-#             "pass":d["password"],
-#             "uid":uid,
-#             "author":str(r["id"])
-#         }
-#         _CONF[uid]["token"]=jwt.encode(json_payload, _SECRET, algorithm="HS256")
-#     except:
-#         print("error login")
-#     if(_CONF.get(uid)):
-#         return quart.Response(response=json.dumps({"status":"ok"}), status=200)
-#     else:
-#         return quart.Response(response="error", status=300)
-    
 
 
 @app.post("/token")
@@ -172,45 +134,6 @@ async def login_to_site(uid):
                 window.close();
             </script>
         """
-    
-
-# @app.get("/auth")
-# async def login_form():
-#     form = """
-#     <form action="/auth" method="post">
-#         <label for="user">User Name:</label><br>
-#         <input id="user" type="text" name="user" value=""><br>
-
-#         <label for="password">Password:</label><br>
-#         <input id="password" type="password" name="password"><br><br>
-
-#         <input type="button" id="login" value="Submit">
-#     </form>
-#     <script>
-#         const btn = document.getElementById("login");
-#         btn.addEventListener("click",function(){
-#            fetch("/auth",{
-#                 method:"POST",
-#                 body: JSON.stringify({
-#                     "password":document.getElementById("password").value,
-#                     "user":document.getElementById("user").value,
-#                     "uid":location.href.split("sid=")[1]
-#                     })
-#             }).then(async (res)=>{
-#                 const stat = await res.json()
-#                 if(stat){
-#                     alert("successfully log in, please go to chatGPT");
-#                     window.close();
-#                 }else{
-#                     alert("Wrong user or password")
-#                 }
-#             }).catch((error) => {
-#                  alert("Wrong user or password")
-#                 });
-#         })
-#     </script>
-#     """
-#     return form
 
 @app.get("/posts/<string:token>")
 async def get_posts(token):
@@ -235,30 +158,8 @@ async def get_posts(token):
 @app.post("/addPost/<string:token>")
 @logged()
 async def add_new_post(token):
-    token = indigest(token)
-    url = token["site"]+"/wp-json/wp/v2/posts"
-    raw_data = (await request.body)
-    data = {}
-    d = {"title":"","content":"","author":""}
-    try:
-        d = literal_eval(raw_data.decode('utf-8'))
-    except:
-        print("raw_data Error")
-    author = token["author"]
-    data = {
-        "title":d.get("title"),
-        "content":d.get("content"),
-        "status":"draft",
-        "author":int(author)
-    }
-    
-    if(d.get("postType")):data["type"]=d["postType"]
-    auth = (token["user"],token["pass"])
-    r = requests.post(url, data = data, auth = auth)
-    res = "Post Error"
-    if(r.json()):res=json.dumps(r.json())
+    res = Posts.add_new_post(token)
     return quart.Response(response=res, status=200)
-
 
 
 @app.post("/updatePost/<string:token>")
@@ -283,19 +184,8 @@ async def delete_post(token,postId):
 
 @app.post("/findPlugin/<string:token>/<string:keyword>")
 @logged()
-async def find_plugin(token,keyword):
-    token = indigest(token)
-    url = token["site"]+"/wp-json/chatgptpress/v1/plugins/search"
-    r = requests.post(url, json={"keyword":keyword}, auth = (token["user"],token["pass"]))
-    pList = r.json()
-    resList = []
-    counter = 0
-    for p in pList:
-        counter+=1
-        p.pop("short_description")
-        resList.append(p)
-        if(counter>=50): break
-    res = {"action":"chatGPT will find and suggest best plugin to install as user's expectation and comapre among them and", "plugins":resList}
+async def find_plugin(token, keyword):
+    res = Plugins.find_plugin(token, keyword)
     return quart.Response(response=json.dumps(res), status=200)
 
 
