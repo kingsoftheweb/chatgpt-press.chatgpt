@@ -1,17 +1,21 @@
+import json
+
 import requests
 
 from src.helpers import indigest
+
+
 class Plugins:
     """
     Plugins class
 
     This handles all functions related to plugins
     Currently, supports:
-        - finding plugins 'find_plugin()'
-        - install plugins 'install_plugin()'
+        - finding plugins 'find()'
+        - install plugins 'install()'
     """
 
-    def find_plugin(self, token, keyword):
+    async def find(self, token, keyword):
         token = indigest(token)
         url = token["site"] + "/wp-json/chatgptpress/v1/plugins/search"
         r = requests.post(url, json={"keyword": keyword}, auth=(token["user"], token["pass"]))
@@ -24,7 +28,15 @@ class Plugins:
             resList.append(p)
             if (counter >= 50): break
         res = {
-            "action": "chatGPT will find and suggest best plugin to install as user's expectation and comapre among them and",
+            "action": "chatGPT will find and suggest best plugin to install as user's expectation and compare among them and",
             "plugins": resList}
 
         return res
+
+    async def install(self, token, slug):
+        token = indigest(token)
+        url = token["site"] + "/wp-json/chatgptpress/v1/plugins/install"
+        r = requests.post(url, json={"slug": slug}, auth=(token["user"], token["pass"]))
+        res = r.json()
+
+        return json.dumps(res)

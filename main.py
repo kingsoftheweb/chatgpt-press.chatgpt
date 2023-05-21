@@ -185,18 +185,15 @@ async def delete_post(token, postId):
 @app.post("/findPlugin/<string:token>/<string:keyword>")
 @logged()
 async def find_plugin(token, keyword):
-    res = Plugins.find_plugin(token, keyword)
+    res = await Plugins().find(token, keyword)
     return quart.Response(response=json.dumps(res), status=200)
 
 
 @app.post("/installPlugin/<string:token>/<string:slug>")
 @logged()
 async def install_plugin(token, slug):
-    token = indigest(token)
-    url = token["site"] + "/wp-json/chatgptpress/v1/plugins/install"
-    r = requests.post(url, json={"slug": slug}, auth=(token["user"], token["pass"]))
-    res = r.json()
-    return quart.Response(response=json.dumps(res), status=200)
+    res = await Plugins().install(token, slug)
+    return quart.Response(response=res, status=200)
 
 
 @app.post("/debug/<string:token>")
