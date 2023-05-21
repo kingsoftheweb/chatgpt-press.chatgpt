@@ -13,12 +13,39 @@ import uuid
 import re
 
 from globals import _SECRET, _CONF
+from src.helpers import indigest, noSiteException
 
 from src.Posts import Posts
 from src.Plugins import Plugins
 from src.Debug import Debug
 
 app = quart_cors.cors(quart.Quart(__name__), allow_origin="https://chat.openai.com")
+
+
+####################
+# Plugin Configs ###
+####################
+@app.get("/logo.png")
+async def plugin_logo():
+    filename = 'logo.png'
+    return await quart.send_file(filename, mimetype='image/png')
+
+
+@app.get("/.well-known/ai-plugin.json")
+async def plugin_manifest():
+    host = request.headers['Host']
+    with open("./.well-known/ai-plugin.json") as f:
+        text = f.read()
+        return quart.Response(text, mimetype="text/json")
+
+
+@app.get("/openapi.yaml")
+async def openapi_spec():
+    host = request.headers['Host']
+    with open("openapi.yaml") as f:
+        text = f.read()
+        return quart.Response(text, mimetype="text/yaml")
+
 
 
 def genAuth(site=False):
@@ -41,18 +68,6 @@ def genAuth(site=False):
     else:
         return {
             "error": "chatgptpress plugin not found in your website. please install the plugin and come back again."}
-
-
-def indigest(token):
-    try:
-        return jwt.decode(token, _SECRET, verify_exp=True, algorithms=["HS256"])
-    except:
-        return {"error": "The request session has been expired. please give your wp site address to start again."}
-
-
-def noSiteException():
-    return {"error": "provide you wp site address to continue."}
-
 
 def validSite(site):
     site = site.replace("https://", "")
@@ -134,7 +149,7 @@ async def login_to_site(uid):
                 window.close();
             </script>
         """
-    if (_CONF.get(uid)):
+    if _CONF.get(uid):
         return """
             <script>
                 alert("Login successfull. Please go back to chatGPT and continue your conversation.");
@@ -209,28 +224,6 @@ async def install_plugin(token, slug):
 async def debug_list(token):
     res = Debug().list(token)
     return quart.Response(response=res, status=200)
-
-
-@app.get("/logo.png")
-async def plugin_logo():
-    filename = 'logo.png'
-    return await quart.send_file(filename, mimetype='image/png')
-
-
-@app.get("/.well-known/ai-plugin.json")
-async def plugin_manifest():
-    host = request.headers['Host']
-    with open("./.well-known/ai-plugin.json") as f:
-        text = f.read()
-        return quart.Response(text, mimetype="text/json")
-
-
-@app.get("/openapi.yaml")
-async def openapi_spec():
-    host = request.headers['Host']
-    with open("openapi.yaml") as f:
-        text = f.read()
-        return quart.Response(text, mimetype="text/yaml")
 
 
 def main():
