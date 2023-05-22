@@ -2,7 +2,7 @@
 FROM python:3.9-slim
 
 # Set the working directory in the container
-WORKDIR /YOUR_WORKING_DIRECTORY
+WORKDIR /home/kingsoftheweb/futrx-gpt
 
 # Create and activate a virtual environment no need if you run inside docker image
 # RUN python -m venv venv
@@ -21,4 +21,4 @@ COPY . .
 EXPOSE 5003
 
 # Specify the command to run the application
-CMD [ "python", "app.py" ]
+CMD [ "python", "main.py" ]
