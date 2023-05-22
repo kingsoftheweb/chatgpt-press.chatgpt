@@ -17,8 +17,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the application code to the working directory
 COPY . .
 
-# Expose a port (if needed)
-EXPOSE 8000
+# Expose a port
+EXPOSE 5003
 
 # Specify the command to run the application
 CMD [ "python", "app.py" ]
