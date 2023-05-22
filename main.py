@@ -58,8 +58,8 @@ async def login_to_wordpress(uid):
     await Authenticate().login_to_wordpress(uid)
     if _CONF.get(uid):
         return """
+            <h6>Login successfull. Please go back to chatGPT and continue your conversation.</h6>
             <script>
-                alert("Login successfull. Please go back to chatGPT and continue your conversation.");
                 window.close();
             </script>
         """
@@ -105,6 +105,10 @@ async def get_posts(token):
     res = await Posts().get_posts(token)
     return quart.Response(response=res, status=200)
 
+@app.post("/posts/<string:token>")
+async def get_post_details(token):
+    res = await Posts().get_post_details(token)
+    return quart.Response(response=res, status=200)
 
 @app.post("/addPost/<string:token>")
 @logged()

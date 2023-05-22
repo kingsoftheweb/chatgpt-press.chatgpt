@@ -6,7 +6,7 @@ from quart import request
 from ast import literal_eval
 from dateutil.parser import parse
 
-from src.helpers import indigest
+from src.helpers import indigest, valid_post_type
 
 
 class Posts:
@@ -21,29 +21,38 @@ class Posts:
         - Deleting an existing post 'delete()'
     """
 
+    async def get_post_details(self, token):
+        token = indigest(token)
+        if token.get("error"): return token
+        postType = request.args.get('postType')
+        postType = valid_post_type(postType)
+        if (request.args.get('postId')):
+            url = token["site"] + "/wp-json/wp/v2/" + postType + "/" +request.args.get('postId')
+            r = requests.get(url)
+            return json.dumps(r.json())
+
     # TODO Add support for other post types (example 'recipe' post type)
     async def get_posts(self, token):
         token = indigest(token)
         if token.get("error"): return token
-        url = token["site"] + "/wp-json/wp/v2/posts?"
-        if request.args.get('postId'):
-            url = token["site"] + "/wp-json/wp/v2/posts/" + request.args.get('postId')
-            print(url)
-            r = requests.get(url)
-            return quart.Response(response=json.dumps(r.json()), status=200)
-        if request.args.get('postType'): url = token["site"] + '/wp-json/wp/v2/' + request.args.get('postType') + "?"
-        url += "_fields=id,date,link&per_page=10"
+        postType = request.args.get('postType')
+        postType = valid_post_type(postType)
+        url = token["site"] + "/wp-json/wp/v2/"+ postType
+        #if request.args.get('postType'): url = token["site"] + '/wp-json/wp/v2/' + request.args.get('postType') + "?"
+        url += "?_fields=id,date,link&per_page=10"
         after = request.args.get('afterDate')
         if after: url += "&after=" + parse(after).isoformat()
         before = request.args.get('beforeDate')
         if before: url += "&before=" + parse(before).isoformat()
         r = requests.get(url)
-
+        print(r.json())
         return json.dumps(r.json())
 
     async def add_new(self, token):
         token = indigest(token)
-        url = token["site"] + "/wp-json/wp/v2/posts"
+        postType = request.args.get('postType')
+        postType = valid_post_type(postType)
+        url = token["site"] + "/wp-json/wp/v2/"+postType
         raw_data = (await request.body)
         d = {"title": "", "content": "", "author": ""}
         try:
@@ -58,7 +67,6 @@ class Posts:
             "author": int(author)
         }
 
-        if d.get("postType"): data["type"] = d["postType"]
         auth = (token["user"], token["pass"])
         r = requests.post(url, data=data, auth=auth)
         res = "Post Error"
@@ -68,18 +76,22 @@ class Posts:
 
     async def update(self, token):
         token = indigest(token)
-        url = token["site"] + "/wp-json/wp/v2/posts/" + request.args.get('post_id')
-        data = {
-            "title": request.args.get('title')
-            # TODO: Add other fields for update!
-        }
+        postType = request.args.get('postType')
+        postType = valid_post_type(postType)
+        url = token["site"] + "/wp-json/wp/v2/" + postType +"/"+request.args.get('post_id')
+        data = {}
+        if(request.args.get('title')):data["title"]=request.args.get('title')
+        if(request.args.get('content')):data["content"]=request.args.get('content')
+        if(request.args.get('status')):data["status"]=request.args.get('status')
         r = requests.post(url, data=data, auth=(token["user"], token["pass"]))
 
         return json.dumps(r.json())
 
     async def delete(self, token, postId):
         token = indigest(token)
-        url = token["site"] + "/wp-json/wp/v2/posts/" + postId
+        postType = request.args.get('postType')
+        postType = valid_post_type(postType)
+        url = token["site"] + "/wp-json/wp/v2/" + postType +"/"+postId
         r = requests.delete(url, auth=(token["user"], token["pass"]))
 
         return json.dumps(r.json())

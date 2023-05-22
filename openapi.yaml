@@ -64,8 +64,20 @@ paths:
           description: use the token you already got after login from /token endpoint
         - name: title
           in: query
-          description: new and updated title for the post that will be replaced
-          required: true
+          description: new or modified title for the post that will be replaced
+          required: false
+          schema:
+            type: string
+        - name: content
+          in: query
+          description: new or modified content for the post that will be replaced
+          required: false
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: up to date status for the post that will be replaced
+          required: false
           schema:
             type: string
         - name: post_id
@@ -74,6 +86,12 @@ paths:
           required: true
           schema:
             type: number
+        - name: postType
+          in: query
+          description: type or category of the post
+          required: true
+          schema:
+            type: string
         
       responses:
         "200":
@@ -93,6 +111,12 @@ paths:
             type: string
         required: true
         description: use the token you already got after login from /token endpoint
+      - name: postType
+        in: query
+        description: type or category of the post
+        required: true
+        schema:
+          type: string
       requestBody:
         required: true
         content: 
@@ -174,6 +198,35 @@ paths:
                 $ref: '#/components/schemas/debugResponse'
 
   /posts/{token}:
+    post:
+      operationId: getPostDetails
+      summary: Get the details of specific post by id
+      parameters:
+        - in: path
+          name: token
+          schema:
+            type: string
+          required: true
+        - name: postId
+          in: query
+          description: get one post with specific post Id
+          required: true
+          schema:
+            type: string
+        - name: postType
+          in: query
+          description: type or category of the post
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getPostDetailsResponse'
+      
     get:
       operationId: getPosts
       summary: Get the list of posts
@@ -193,18 +246,12 @@ paths:
         - name: beforeDate
           in: query
           description: get post before specific date
-          required: false
+          required: true
           schema:
             type: string
         - name: postType
           in: query
-          description: get post only from specific type
-          required: false
-          schema:
-            type: string
-        - name: postId
-          in: query
-          description: get one post with specific post Id
+          description: get post type or category
           required: false
           schema:
             type: string
@@ -233,6 +280,12 @@ paths:
               type: string
           required: true
           description: use the token you already got after login from /token endpoint
+        - name: postType
+          in: query
+          description: type or category of the post
+          required: true
+          schema:
+            type: string
       responses:
         "200":
           description: OK
@@ -251,10 +304,6 @@ components:
     addPostData:
       type: object
       properties:
-        postType:
-          type: string
-          description: Specific type for the wp post
-          required: false
         title:
           type: string
           description: Title for the new post that will be added
@@ -280,11 +329,17 @@ components:
     getListResponse:
       type: object
       properties:
-        list:
+        response:
           type: array
           items:
             post: string
           description: The list of posts.
+    getPostDetailsResponse:
+      type: object
+      properties:
+        response:
+          type: object
+          description: Post details.
     deletePostResponse:
       type: object
       properties:
@@ -296,6 +351,9 @@ components:
         action:
           type: string
           description: "find the best plugins and compare and suggest which one to install"
+        wordpress_version:
+          type: string
+          description: chatGPT will see which plugins will be compatible with this wp version
         plugins:
             type: array
             items:

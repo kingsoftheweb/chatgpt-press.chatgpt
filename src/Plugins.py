@@ -2,8 +2,7 @@ import json
 
 import requests
 
-from src.helpers import indigest
-
+from src.helpers import indigest, plugin_info
 
 class Plugins:
     """
@@ -22,14 +21,18 @@ class Plugins:
         pList = r.json()
         resList = []
         counter = 0
+        info = plugin_info()
         for p in pList:
-            counter += 1
-            p.pop("short_description")
-            resList.append(p)
-            if (counter >= 50): break
+            if(not info["activate_plugins"].get(p["slug"])):
+                counter += 1
+                p.pop("short_description")
+                resList.append(p)
+                if (counter >= 50): break
         res = {
-            "action": "chatGPT will find and suggest best plugin to install as user's expectation and compare among them and",
-            "plugins": resList}
+            "action": "chatGPT will find and suggest best plugin to install as user's expectation and compare among them and suggest if compatible with wordpress version",
+            "plugins": resList,
+            "wordpress_version":info["wordpress_version"]
+            }
 
         return res
 

@@ -37,7 +37,7 @@ class Authenticate:
         if requests.get(site + "/authenticate-chatgptpress").status_code == 200:
             login_url = site + "/authenticate-chatgptpress?redirect_to=" + _REDIRECT_TO + uid
             _CONF[uid] = {"status": True, "site": site}
-            sid = jwt.encode({"uid": uid, "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=85)}, _SECRET,
+            sid = jwt.encode({"uid": uid, "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=10)}, _SECRET,
                              algorithm="HS256")
             res = {
                 "uid": sid,
@@ -72,7 +72,7 @@ class Authenticate:
             if r["id"]: status = "Login successfull, please go back to GPT conversation."
             print(r["id"])
             json_payload = {
-                "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=85),
+                "exp": datetime.datetime.utcnow() + datetime.timedelta(days=3),
                 "site": _CONF.get(uid)["site"],
                 "user": request.args.get("username"),
                 "pass": request.args.get("appPassword"),
