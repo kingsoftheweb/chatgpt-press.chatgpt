@@ -1,5 +1,4 @@
 import jwt
-from quart import request, redirect
 from globals import _SECRET
 import requests
 

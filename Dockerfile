@@ -1,24 +1,9 @@
-# Base image
-FROM python:3.9-slim
+FROM python:3.10
 
-# Set the working directory in the container
-WORKDIR /home/kingsoftheweb/futrx-gpt
-
-# Create and activate a virtual environment no need if you run inside docker image
-# RUN python -m venv venv
-# ENV PATH="/app/venv/bin:$PATH"
-
-# Copy the requirements file to the working directory
 COPY requirements.txt .
 
-# Install the dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+WORKDIR .
 
-# Copy the application code to the working directory
+RUN pip install --no-cache-dir --upgrade -r requirements.txt
+
 COPY . .
-
-# Expose a port
-EXPOSE 5003
-
-# Specify the command to run the application
-CMD [ "python", "main.py" ]

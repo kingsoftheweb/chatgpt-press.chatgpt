@@ -1,6 +1,5 @@
 import json
 
-import quart
 import requests
 from quart import request
 from ast import literal_eval

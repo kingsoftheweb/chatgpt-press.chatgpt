@@ -6,7 +6,7 @@ from quart import request
 
 from globals import _SECRET, _CONF, _REDIRECT_TO
 
-from src.helpers import no_site_exception, indigest, login_error_exception
+from src.helpers import no_site_exception, indigest
 
 
 class Authenticate:
