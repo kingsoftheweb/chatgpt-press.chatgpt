@@ -2,6 +2,7 @@ import jwt
 from globals import _SECRET
 import requests
 
+
 def indigest(token):
     try:
         return jwt.decode(token, _SECRET, verify_exp=True, algorithms=["HS256"])
@@ -23,20 +24,21 @@ def validate_site(site):
     site = "https://" + site
     return site
 
+
 def plugin_info():
     req = requests.get("https://chatgpt.futrx.ca/wp-json/chatgptpress/v1/info/get")
     allInfo = req.json()
     activate_plugins = {}
-    if(allInfo.get("active_plugins")):
+    if (allInfo.get("active_plugins")):
         for p in allInfo["active_plugins"]:
             slug = p.split("/")[0]
-            activate_plugins[slug]=True
-    
-    return {"wordpress_version":allInfo.get("wordpress_version"),
-            "activate_plugins":activate_plugins}
+            activate_plugins[slug] = True
+
+    return {"wordpress_version": allInfo.get("wordpress_version"),
+            "activate_plugins": activate_plugins}
 
 
 def valid_post_type(postType):
-    if(postType=="post"): 
+    if postType == "post" or postType is None:
         postType = "posts"
     return postType

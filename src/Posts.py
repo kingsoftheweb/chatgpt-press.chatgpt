@@ -25,8 +25,8 @@ class Posts:
         if token.get("error"): return token
         postType = request.args.get('postType')
         postType = valid_post_type(postType)
-        if (request.args.get('postId')):
-            url = token["site"] + "/wp-json/wp/v2/" + postType + "/" +request.args.get('postId')
+        if request.args.get('postId'):
+            url = token["site"] + "/wp-json/wp/v2/" + postType + "/" + request.args.get('postId')
             r = requests.get(url)
             return json.dumps(r.json())
 
@@ -34,10 +34,10 @@ class Posts:
     async def get_posts(self, token):
         token = indigest(token)
         if token.get("error"): return token
-        postType = request.args.get('postType')
+        postType = request.args.get('postType') or request.args.get('type')
         postType = valid_post_type(postType)
-        url = token["site"] + "/wp-json/wp/v2/"+ postType
-        #if request.args.get('postType'): url = token["site"] + '/wp-json/wp/v2/' + request.args.get('postType') + "?"
+        url = token["site"] + "/wp-json/wp/v2/" + postType
+        # if request.args.get('postType'): url = token["site"] + '/wp-json/wp/v2/' + request.args.get('postType') + "?"
         url += "?_fields=id,date,link&per_page=10"
         after = request.args.get('afterDate')
         if after: url += "&after=" + parse(after).isoformat()
@@ -51,7 +51,7 @@ class Posts:
         token = indigest(token)
         postType = request.args.get('postType')
         postType = valid_post_type(postType)
-        url = token["site"] + "/wp-json/wp/v2/"+postType
+        url = token["site"] + "/wp-json/wp/v2/" + postType
         raw_data = (await request.body)
         d = {"title": "", "content": "", "author": ""}
         try:
@@ -77,11 +77,11 @@ class Posts:
         token = indigest(token)
         postType = request.args.get('postType')
         postType = valid_post_type(postType)
-        url = token["site"] + "/wp-json/wp/v2/" + postType +"/"+request.args.get('post_id')
+        url = token["site"] + "/wp-json/wp/v2/" + postType + "/" + request.args.get('post_id')
         data = {}
-        if(request.args.get('title')):data["title"]=request.args.get('title')
-        if(request.args.get('content')):data["content"]=request.args.get('content')
-        if(request.args.get('status')):data["status"]=request.args.get('status')
+        if (request.args.get('title')): data["title"] = request.args.get('title')
+        if (request.args.get('content')): data["content"] = request.args.get('content')
+        if (request.args.get('status')): data["status"] = request.args.get('status')
         r = requests.post(url, data=data, auth=(token["user"], token["pass"]))
 
         return json.dumps(r.json())
@@ -90,7 +90,7 @@ class Posts:
         token = indigest(token)
         postType = request.args.get('postType')
         postType = valid_post_type(postType)
-        url = token["site"] + "/wp-json/wp/v2/" + postType +"/"+postId
+        url = token["site"] + "/wp-json/wp/v2/" + postType + "/" + postId
         r = requests.delete(url, auth=(token["user"], token["pass"]))
 
         return json.dumps(r.json())
