@@ -4,7 +4,7 @@ info:
   description: Wordpress management tool that will CRUD your wordpress posts.
   version: 'v1'
 servers:
-  - url: http://localhost:5003
+  - url: https://chatgptpress.app.futrx.ca/
 paths:
   /login:
     post:
