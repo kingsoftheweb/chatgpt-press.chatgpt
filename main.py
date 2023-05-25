@@ -40,6 +40,14 @@ async def openapi_spec():
         return quart.Response(text, mimetype="text/yaml")
 
 
+@app.get("/legal")
+async def legal_docs():
+    host = request.headers['Host']
+    with open(".well-known/legal.html") as f:
+        text = f.read()
+        return quart.Response(text, mimetype="text/html")
+
+
 ########################
 # Authentication #######
 ########################
@@ -105,10 +113,12 @@ async def get_posts(token):
     res = await Posts().get_posts(token)
     return quart.Response(response=res, status=200)
 
+
 @app.post("/posts/<string:token>")
 async def get_post_details(token):
     res = await Posts().get_post_details(token)
     return quart.Response(response=res, status=200)
+
 
 @app.post("/addPost/<string:token>")
 @logged()
@@ -168,4 +178,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
