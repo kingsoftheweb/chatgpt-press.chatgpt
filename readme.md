@@ -10,22 +10,21 @@ TBD
 TBD
 
 
-## Build Steps:
+## Development:
 
-### Start the docker container on local
-    docker compose -f docker-compose.dev.yml --env-file .env.local up
+#### 1. Start the docker container on local
+    docker compose --env-file .env.local up
 
-### Start the docker container on production
-    docker compose --env-file .env.prod up
+#### 2. Commit your work, and push to the repository
+    git add .
+    git commit -m "your commit message"
+    git push origin main
 
-
-## Usage:
+## Access:
 
 ### Local
-#### Access
 - http://localhost:5003/
 
 
 ### Production
-#### Access
 - https://chatgptpress.ca/
