@@ -13,7 +13,7 @@ TBD
 ## Build Steps:
 
 ### Start the docker container on local
-    docker compose --env-file .env.local up
+    docker compose -f docker-compose.dev.yml --env-file .env.local up
 
 ### Start the docker container on production
     docker compose --env-file .env.prod up
