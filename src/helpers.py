@@ -40,5 +40,5 @@ def plugin_info():
 
 def valid_post_type(postType):
     if postType == "post" or postType is None:
-        postType = "posts"
+        return "posts"
     return postType
