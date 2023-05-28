@@ -121,31 +121,31 @@ paths:
           description: This endpoint is protected, and will need that you use the token you already retrieved earlier from the /token endpoint.
         - name: title
           in: query
-          description: new or modified title for the post that will be replaced
+          description: When this is provided, this should be used as the new or the modified/updated title for the post that should replace the old title.
           required: false
           schema:
             type: string
         - name: content
           in: query
-          description: new or modified content for the post that will be replaced
+          description: When this is provided, this should be used as the new or the modified/updated content for the post that should replace the old content.
           required: false
           schema:
             type: string
         - name: status
           in: query
-          description: up to date status for the post that will be replaced
+          description: When this is provided, this should be used as the new or the modified/updated status for the post that should replace the old status. The status can be "publish", "draft", "pending", "private", "future", "trash", or "auto-draft".
           required: false
           schema:
             type: string
         - name: post_id
           in: query
-          description: unique id number for the specific post that is needed to change
+          description: This is the unique ID for the specific post that you want to update. This is required and must be provided.
           required: true
           schema:
             type: number
         - name: postType
           in: query
-          description: type or category of the post
+          description: The post type of the post that you want to update. WordPress uses the term "post type" to refer to different types of content that can be created and stored in the WordPress database. By default, WordPress comes with these post types "Page", "Post" and "Attachment". You can also create your own custom post types. If "postType" is not provided, the default post type will be "post".
           required: true
           schema:
             type: string

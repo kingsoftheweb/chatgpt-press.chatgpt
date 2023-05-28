@@ -2,8 +2,9 @@
   "schema_version": "v1",
   "name_for_human": "ChatGPTPress",
   "name_for_model": "ChatGPTPress",
-  "description_for_human": "Plugin for managing a wordpress site, you can add, get, remove WP posts and plugins.",
-  "description_for_model": "Plugin for managing a wordpress site, you can add, get, remove WP posts and plugins. Adding post content should be good html code for json that should not occur any parse error. chatGPT must not generate any website address for /login endpoint and must ask users to input their wp site address. If users do not log in show them the unique login link from /login and don't show same login link more than once. After a new login you must get the refreshed auth token using the last uid you got. always use last uid and last token that you have. Compare and give your comment when find plugins. Using debug you should suggest how to solve specific warning or error.",
+  "description_for_human": "A Plugin for managing a wordpress site, you can add, get, remove WP posts and plugins.",
+  "description_for_model": "A Plugin for managing a WordPress site: This plugin allows you to efficiently manage your WordPress website by providing functionalities such as adding, retrieving, and removing WordPress posts and plugins. When adding post content, it ensures that the HTML code for JSON is properly formatted to avoid any parsing errors. To ensure security, ChatGPT does not generate any website addresses for the \"/login\" endpoint. Instead, it prompts users to input their WordPress site address. If users are not logged in, the plugin displays a unique login link from the \"/login\" endpoint. The plugin ensures that the same login link is not shown more than once. Upon successful login, the plugin retrieves the refreshed authentication token using the last user ID (UID) obtained. It always utilizes the most recent UID and token available. Additionally, the plugin provides plugin comparison functionality and offers comments when identifying plugins. By utilizing the debug feature, the plugin suggests solutions for specific warnings or errors encountered during operation.",
+
   "auth": {
     "type": "none"
   },
