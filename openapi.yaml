@@ -9,34 +9,25 @@ paths:
   /login:
     post:
       operationId: loginAuth
-      summary: get auth uid from here. Must provide the wp site address that you want to manage
+      summary: Get the authentication uid from here. Must provide the WordPress site address that you will connect to.
       parameters:
         - in: query
           name: site
           schema:
             type: string
           required: true
-          description: chatGPT must not generate it and must be taken from user
+          description: ChatGPT must not generate it and must be provided by the user.
       responses:
         "200":
           description: OK
           content:
             application/json:
               schema:
-                response:
-                  type: object
-                  description: you will get auth uid and unique link to login
-                  properties:
-                    uid:
-                      type: string
-                      description: unique id that will be used to prove auth
-                    link:
-                      type: string
-                      description: unique link to login. go and login manually.
+                  $ref: '#/components/schemas/loginResponse'
   /token:
     post:
       operationId: getToken
-      summary: Get the auth token to request protected URL
+      summary: Get the authentication token to request protected URL
       parameters:
         - name: uid
           in: query
@@ -51,17 +42,83 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/tokenResponse'
-  /updatePost/{token}:
+  /posts/{token}:
     post:
-      operationId: updatePost
-      summary: update a existed post that already have been in wp
+      operationId: getPostDetails
+      summary: Get the details of specific post by its ID.
+      parameters:
+        - name: token
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: postId
+          in: query
+          description: Get all the information of a single post with specific post ID.
+          required: true
+          schema:
+            type: string
+        - name: postType
+          in: query
+          description: The post type that will need to be retrieved. WordPress uses the term "post type" to refer to different types of content that can be created and stored in the WordPress database. By default, WordPress comes with these post types "Page", "Post" and "Attachment". You can also create your own custom post types. If "postType" is not provided, the default post type will be "post".
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getPostDetailsResponse'
+
+    get:
+      operationId: getPosts
+      summary: Get list of the requested posts from the WordPress site.
       parameters:
         - in: path
           name: token
           schema:
             type: string
           required: true
-          description: use the token you already got after login from /token endpoint
+          description: This endpoint is protected, and will need that you use the token you already retrieved earlier from the /token endpoint.
+        - name: afterDate
+          in: query
+          description: Get list of posts that were published after a specific date.
+          required: false
+          schema:
+            type: string
+        - name: beforeDate
+          in: query
+          description: Get list of posts that were published before a specific date.
+          required: true
+          schema:
+            type: string
+        - name: postType
+          in: query
+          description: The post type that will need to be retrieved. WordPress uses the term "post type" to refer to different types of content that can be created and stored in the WordPress database. By default, WordPress comes with these post types "Page", "Post" and "Attachment". You can also create your own custom post types. If "postType" is not provided, the default post type will be "post".
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getListResponse'
+
+  /updatePost/{token}:
+    post:
+      operationId: updatePost
+      summary: Update an existed post that already exists in the WordPress site. This can be used to update the title, content, status, or any other information of the post.
+      parameters:
+        - in: path
+          name: token
+          schema:
+            type: string
+          required: true
+          description: This endpoint is protected, and will need that you use the token you already retrieved earlier from the /token endpoint.
         - name: title
           in: query
           description: new or modified title for the post that will be replaced
@@ -196,73 +253,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/debugResponse'
-
-  /posts/{token}:
-    post:
-      operationId: getPostDetails
-      summary: Get the details of specific post by id
-      parameters:
-        - in: path
-          name: token
-          schema:
-            type: string
-          required: true
-        - name: postId
-          in: query
-          description: get one post with specific post Id
-          required: true
-          schema:
-            type: string
-        - name: postType
-          in: query
-          description: type or category of the post
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/getPostDetailsResponse'
-      
-    get:
-      operationId: getPosts
-      summary: Get the list of posts
-      parameters:
-        - in: path
-          name: token
-          schema:
-            type: string
-          required: true
-          description: use the token you already got after login from /token endpoint
-        - name: afterDate
-          in: query
-          description: get post after specific date
-          required: false
-          schema:
-            type: string
-        - name: beforeDate
-          in: query
-          description: get post before specific date
-          required: true
-          schema:
-            type: string
-        - name: postType
-          in: query
-          description: get post type or category
-          required: false
-          schema:
-            type: string
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/getListResponse'
-                
   /deletePost/{token}/{postId}:
     post:
       operationId: deletePost
@@ -296,6 +286,12 @@ paths:
 
 components:
   schemas:
+    loginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          description: The token that will be used in the next requests
     tokenResponse:
       type: object
       properties:
