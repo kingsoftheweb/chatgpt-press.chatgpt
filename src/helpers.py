@@ -33,9 +33,13 @@ def plugin_info():
         for p in allInfo["active_plugins"]:
             slug = p.split("/")[0]
             activate_plugins[slug] = True
-
     return {"wordpress_version": allInfo.get("wordpress_version"),
             "activate_plugins": activate_plugins}
+
+
+def wp_info():
+    req = requests.get("https://chatgpt.futrx.ca/wp-json/chatgptpress/v1/info/get") 
+    return req.json()
 
 
 def valid_post_type(postType):

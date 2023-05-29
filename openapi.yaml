@@ -211,6 +211,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/findPluginResponse'
+  /wpInfo/{token}:
+    post:
+      operationId: findWpInfo
+      summary: Get wordpress information for current site
+      parameters:
+      - in: path
+        name: token
+        schema:
+            type: string
+        required: true
+        description: use the token you already got after login from /token endpoint
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/findPluginResponse'
+
   /installPlugin/{token}/{slug}:
     post:
       operationId: installPlugin

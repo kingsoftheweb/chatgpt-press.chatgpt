@@ -5,7 +5,7 @@ from quart import request
 from functools import wraps
 
 from globals import _CONF
-from src.helpers import indigest, validate_site
+from src.helpers import indigest, validate_site, wp_info
 
 from src.Authenticate import Authenticate
 from src.Posts import Posts
@@ -160,6 +160,15 @@ async def install_plugin(token, slug):
     except json.decoder.JSONDecodeError:
         error_message = "Error: Failed to parse JSON response"
         return quart.Response(response=error_message, status=500)
+
+
+########################
+# WP INFO ##############
+########################
+@app.post("/wpInfo/<string:token>")
+@logged()
+async def get_wp_info(token):
+    return quart.Response(response=json.dumps(wp_info()), status=200)
 
 
 ########################
