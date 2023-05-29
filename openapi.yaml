@@ -228,7 +228,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/findPluginResponse'
+                $ref: '#/components/schemas/wpInfoResponse'
 
   /installPlugin/{token}/{slug}:
     post:
@@ -360,6 +360,26 @@ components:
       properties:
         description:
           type: object
+    wpInfoResponse:
+      type: object
+      description: Get details information about wordpress version, theme, plugins and server
+      properties:
+        server:
+          type: object
+          description: server information about mysql, php and others.
+        wordpress_version:
+          type: string
+          description: get current wordpress version that has been using by the site
+        active_plugins:
+          type: array
+            items:
+              plugin:
+                type: string
+                description: Plugin folders those already have been installed and activate.
+        active_theme:
+          type: string
+          description: installed and activated theme that has been using
+
     findPluginResponse:
       type: object
       properties:
