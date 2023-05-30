@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
   title: Futrx Plugin
-  description: Wordpress management tool that will CRUD your wordpress posts.
+  description: A Plugin for managing a wordpress site, you can add, get, remove WP posts and plugins.
   version: 'v1'
 servers:
   - url: https://chatgptpress.app.futrx.ca/
