@@ -107,7 +107,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/getListResponse'
-
   /updatePost/{token}:
     post:
       operationId: updatePost
@@ -187,91 +186,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/addPostResponse'
-  /findPlugin/{token}/{keyword}:
-    post:
-      operationId: findPlugin
-      summary: find and suggest wp plugins using specific keyword
-      parameters:
-      - in: path
-        name: token
-        schema:
-            type: string
-        required: true
-        description: use the token you already got after login from /token endpoint
-      - in: path
-        name: keyword
-        schema:
-            type: string
-        required: true
-        description: the keyword to search the specific wp plugin.
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/findPluginResponse'
-  /wpInfo/{token}:
-    post:
-      operationId: findWpInfo
-      summary: Get wordpress information for current site
-      parameters:
-      - in: path
-        name: token
-        schema:
-            type: string
-        required: true
-        description: use the token you already got after login from /token endpoint
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/wpInfoResponse'
-
-  /installPlugin/{token}/{slug}:
-    post:
-      operationId: installPlugin
-      summary: install one plugin from the suggested list
-      parameters:
-      - in: path
-        name: token
-        schema:
-            type: string
-        required: true
-        description: use the token you already got after login from /token endpoint
-      - in: path
-        name: slug
-        schema:
-            type: string
-        required: true
-        description: the plugin slug that will be installed.
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/installPluginResponse'
-  /debug/{token}:
-    post:
-      operationId: debugWP
-      summary: get issues, error and warnings from wp debug
-      parameters:
-      - in: path
-        name: token
-        schema:
-            type: string
-        required: true
-        description: use the token you already got after login from /token endpoint
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/debugResponse'
   /deletePost/{token}/{postId}:
     post:
       operationId: deletePost
@@ -360,58 +274,3 @@ components:
       properties:
         description:
           type: object
-    wpInfoResponse:
-      type: object
-      properties:
-        server:
-          type: object
-          description: server information about mysql, php and others.
-          properties:
-            server_info:
-              type: object
-        wordpress_version:
-          type: string
-          description: get current wordpress version that has been using by the site
-        active_plugins:
-          type: array
-          items:
-            plugin:
-              type: string
-          description: Plugin folders those already have been installed and activate.
-        active_theme:
-          type: string
-          description: installed and activated theme that has been using
-
-    findPluginResponse:
-      type: object
-      properties:
-        action:
-          type: string
-          description: "find the best plugins and compare and suggest which one to install"
-        wordpress_version:
-          type: string
-          description: chatGPT will see which plugins will be compatible with this wp version
-        plugins:
-            type: array
-            items:
-              plugin:
-                type: object
-            description: the plugins list that should be analysis and chatGPT will suggest the best one to install.
-    installPluginResponse:
-      type: object
-      properties:
-        result:
-          type: string
-          description: "plugin install result"
-    debugResponse:
-      type: object
-      properties:
-        action:
-          type: string
-          description: "Please find the way how to solve the issue"
-        plugins:
-            type: array
-            items:
-              plugin:
-                type: object
-            description: the warnings and error from WP debug.

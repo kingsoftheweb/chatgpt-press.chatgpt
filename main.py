@@ -140,47 +140,6 @@ async def delete_post(token, postId):
     res = await Posts().delete(token, postId)
     return quart.Response(response=res, status=200)
 
-
-########################
-# PLUGINS ##############
-########################
-@app.post("/findPlugin/<string:token>/<string:keyword>")
-@logged()
-async def find_plugin(token, keyword):
-    res = await Plugins().find(token, keyword)
-    return quart.Response(response=json.dumps(res), status=200)
-
-
-@app.post("/installPlugin/<string:token>/<string:slug>")
-@logged()
-async def install_plugin(token, slug):
-    try:
-        res = await Plugins().install(token, slug)
-        return quart.Response(response=res, status=200)
-    except json.decoder.JSONDecodeError:
-        error_message = "Error: Failed to parse JSON response"
-        return quart.Response(response=error_message, status=500)
-
-
-########################
-# WP INFO ##############
-########################
-@app.post("/wpInfo/<string:token>")
-@logged()
-async def get_wp_info(token):
-    return quart.Response(response=json.dumps(wp_info()), status=200)
-
-
-########################
-# DEBUG ################
-########################
-@app.post("/debug/<string:token>")
-@logged()
-async def debug_list(token):
-    res = Debug().list(token)
-    return quart.Response(response=res, status=200)
-
-
 def main():
     app.run(debug=True, host="0.0.0.0", port=5003)
 
