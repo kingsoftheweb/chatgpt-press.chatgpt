@@ -18,11 +18,13 @@ def login_error_exception():
     return {"error": "login failed. please try again."}
 
 
-def validate_site(site):
-    site = site.replace("https://", "")
-    site = site.replace("http://", "")
-    site = "https://" + site
-    return site
+def validate_site(site_url):
+    # return a valid https url
+    if site_url.startswith("http://"):
+        site_url = site_url.replace("http://", "https://")
+    elif not site_url.startswith("https://"):
+        site_url = "https://" + site_url
+    return site_url
 
 
 def plugin_info():
@@ -38,7 +40,7 @@ def plugin_info():
 
 
 def wp_info():
-    req = requests.get("https://chatgpt.futrx.ca/wp-json/chatgptpress/v1/info/get") 
+    req = requests.get("https://chatgpt.futrx.ca/wp-json/chatgptpress/v1/info/get")
     return req.json()
 
 

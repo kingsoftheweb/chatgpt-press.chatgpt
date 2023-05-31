@@ -18,34 +18,50 @@ class Authenticate:
         - starting the authentication process 'start()'
     """
 
-    def start(self, site=False):
+    def start(self, site=None):
         """
-        This function will start the authentication process, by calling the /authenticate-chatgptpress endpoint in the
+        This function will start the authentication process, by calling the /wp-admin/authorize-application.php endpoint in the
         WordPress site.
 
         :param site:
         :return:
         """
-        if not site: return no_site_exception()
+        if not site:
+            return no_site_exception()
         uid = str(uuid.uuid1())
-        try:
-            r = requests.get(site)
-            if r.status_code != 200:  return {"error": "Please check your web address. It seems invalid."}
-        except:
-            return {"error": "Please check your web address. It seems invalid."}
 
-        if requests.get(site + "/authenticate-chatgptpress").status_code == 200:
-            login_url = site + "/authenticate-chatgptpress?redirect_to=" + _REDIRECT_TO + uid
-            _CONF[uid] = {"status": True, "site": site}
-            sid = jwt.encode({"uid": uid, "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=10)}, _SECRET,
-                             algorithm="HS256")
+        r = requests.get(site)
+        if r.status_code != 200:
+            return {
+                "error": "Please check your Web Address. It seems invalid."
+            }
+
+        authentication_url = site + "wp-admin/authorize-application.php"
+        if requests.get(authentication_url).status_code == 200:
+            current_timestamp = datetime.datetime.now().timestamp()
+            app_name = "ChatGPTPress" + str(current_timestamp)
+            login_url = authentication_url + "?app_name=" + app_name
+            _CONF[uid] = {
+                "status": True,
+                "site": site
+            }
+            sid = jwt.encode(
+                {
+                    "uid": uid,
+                    "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=10)
+                }, _SECRET, algorithm="HS256")
+
             res = {
                 "uid": sid,
-                "action": "You need to login manually. chatGPT will show login link: " + login_url
+                "action": "You need to authenticate manually over the WordPress site."
+                          + "ChatGPT will show the Authorization link: " + login_url + " to the user."
             }
         else:
-            res = {"error": "chatgptpress plugin not found in your website. please install the plugin and come back "
-                            "again."}
+            res = {
+                "error": "Authorization is not active on your site. Please make sure to activate it."
+                         + "Here is a helpful link: "
+                         + "https://make.wordpress.org/core/2020/11/05/application-passwords-integration-guide/#Getting-Credentials"
+            }
 
         return res
 
