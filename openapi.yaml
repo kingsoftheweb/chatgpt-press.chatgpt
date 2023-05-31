@@ -1,22 +1,23 @@
 openapi: 3.0.1
 info:
-  title: Futrx Plugin
-  description: A Plugin for managing a wordpress site, you can add, get, remove WP posts and plugins.
+  title: ChatGPTPress
+  description: A Plugin for managing a WordPress site. You can add, get, remove WP posts and plugins.
   version: 'v1'
 servers:
-  - url: https://chatgptpress.app.futrx.ca/
+  - url: http://localhost:5003
+    description: Local server
 paths:
   /login:
     post:
       operationId: loginAuth
-      summary: Get the authentication uid from here. Must provide the WordPress site address that you will connect to.
+      summary: Get the authentication uid from here. User must provide the WordPress site address, so ChatGPT can provide an authorization url to the user to login to the WordPress site and get the uid.
       parameters:
-        - in: query
-          name: site
+        - name: site
+          in: query
           schema:
             type: string
           required: true
-          description: ChatGPT must not generate it and must be provided by the user.
+          description: ChatGPT must not generate it and must be provided by the user. ChatGPT should save this value and use it in the future for any requests to the WordPress site.
       responses:
         "200":
           description: OK
