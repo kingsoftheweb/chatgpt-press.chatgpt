@@ -28,23 +28,23 @@ paths:
   /token:
     post:
       operationId: getToken
-      summary: Get the authentication token to request protected URL
+      summary: Get the authentication token to be used in the future requests to the WordPress site. This will make the requests to the WordPress site authenticated.
       parameters:
         - name: uid
           in: query
-          description: the uid you already got
+          description: The authentication uid that ChatGPT got from the /login endpoint.
           required: true
           schema:
             type: string
         - name: username
           in: query
-          description: the username provided by the user
+          description: The username provided by the user, and will be used to login to the WordPress site. If the user does not provide the username, ChatGPT will ask them to provide it.
           required: true
           schema:
             type: string
         - name: appPassword
           in: query
-          description: the app password provided by the user
+          description: The application password provided by the user, and will be used to login to the WordPress site. If the user does not provide the application password, ChatGPT will ask them to provide it.
           required: true
           schema:
             type: string
@@ -67,7 +67,7 @@ paths:
           required: true
         - name: postId
           in: query
-          description: Get all the information of a single post with specific post ID.
+          description: Get all the information of a single post using the unique post ID.
           required: true
           schema:
             type: string
@@ -94,7 +94,7 @@ paths:
           schema:
             type: string
           required: true
-          description: This endpoint is protected, and will need that you use the token you already retrieved earlier from the /token endpoint.
+          description: This endpoint is protected (needs authentication), and will need that you use the token you already retrieved earlier from the /token endpoint.
         - name: afterDate
           in: query
           description: Get list of posts that were published after a specific date.
@@ -237,7 +237,7 @@ components:
       properties:
         token:
           type: string
-          description: The token that will be used in the next requests
+          description: The token that will be used in all next requests made by ChatGPT to the WordPress site, after the user has logged in successfully.
     tokenResponse:
       type: object
       properties:
@@ -248,10 +248,10 @@ components:
       properties:
         title:
           type: string
-          description: Title for the new post that will be added
+          description: Title for the new post that will be added.
         content:
           type: string
-          description: HTML format post body that will be added as a new post
+          description: HTML format post body that will be added to the new post.
     updatePostResponse:
       type: object
       properties:
@@ -259,7 +259,7 @@ components:
           type: array
           items:
             postDetails: string
-          description: The post has been updated successfully.
+          description: The post that has been updated successfully.
     addPostResponse:
       type: object
       properties:
@@ -275,7 +275,7 @@ components:
           type: array
           items:
             post: string
-          description: The list of posts.
+          description: The list of posts that have been retrieved successfully.
     getPostDetailsResponse:
       type: object
       properties:
