@@ -30,7 +30,6 @@ class Posts:
             r = requests.get(url)
             return json.dumps(r.json())
 
-    # TODO Add support for other post types (example 'recipe' post type)
     async def get_posts(self, token):
         token = indigest(token)
         if token.get("error"): return token
@@ -79,9 +78,9 @@ class Posts:
         postType = valid_post_type(postType)
         url = token["site"] + "/wp-json/wp/v2/" + postType + "/" + request.args.get('post_id')
         data = {}
-        if (request.args.get('title')): data["title"] = request.args.get('title')
-        if (request.args.get('content')): data["content"] = request.args.get('content')
-        if (request.args.get('status')): data["status"] = request.args.get('status')
+        if request.args.get('title'): data["title"] = request.args.get('title')
+        if request.args.get('content'): data["content"] = request.args.get('content')
+        if request.args.get('status'): data["status"] = request.args.get('status')
         r = requests.post(url, data=data, auth=(token["user"], token["pass"]))
 
         return json.dumps(r.json())
