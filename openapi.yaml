@@ -1,11 +1,10 @@
 openapi: 3.0.1
 info:
-  title: ChatGPTPress
+  title: WordPressGPT
   description: A Plugin for managing a WordPress site. You can add, get, remove WP posts and plugins.
   version: 'v1'
 servers:
-  - url: http://localhost:5003
-    description: Local server
+  - url: https://wordpressgpt.net
 paths:
   /login:
     post:

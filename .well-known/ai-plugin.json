@@ -1,19 +1,19 @@
 {
   "schema_version": "v1",
-  "name_for_human": "ChatGPTPress",
-  "name_for_model": "ChatGPTPress",
-  "description_for_human": "A Plugin for managing a wordpress site, you can add, get, remove WP posts and plugins.",
-  "description_for_model": "A Plugin for managing a WordPress site: This plugin allows you to efficiently manage your WordPress website by providing functionalities such as adding, retrieving, and removing WordPress posts and plugins. When adding post content, it ensures that the HTML code for JSON is properly formatted to avoid any parsing errors. To ensure security, ChatGPT does not generate any website addresses for the \"/login\" endpoint. Instead, it prompts users to input their WordPress site address. If users are not logged in, the plugin displays a unique login link from the \"/login\" endpoint. The plugin ensures that the same login link is not shown more than once. Upon successful login, the plugin retrieves the refreshed authentication token using the last user ID (UID) obtained. It always utilizes the most recent UID and token available. Additionally, the plugin provides plugin comparison functionality and offers comments when identifying plugins. By utilizing the debug feature, the plugin suggests solutions for specific warnings or errors encountered during operation.",
+  "name_for_human": "WordPressGPT",
+  "name_for_model": "WordPressGPT",
+  "description_for_human": "A Plugin for managing a Wordpress site, you can add, update, delete posts.",
+  "description_for_model": "A Plugin for managing a WordPress site: This plugin allows you to efficiently manage your WordPress website by providing functionalities such as adding, retrieving, and removing WordPress posts. When adding post content, it ensures that the HTML code for JSON is properly formatted to avoid any parsing errors. To ensure security, the AI model does not generate any website addresses for the \"/login\" endpoint. Instead, it prompts users to input their WordPress site address. If users are not logged in, the plugin displays a unique login link from the \"/login\" endpoint. The plugin ensures that the same login link is not shown more than once. Upon successful login, the plugin retrieves the refreshed authentication token using the last user ID (UID) obtained. It always utilizes the most recent UID and token available.",
 
   "auth": {
     "type": "none"
   },
   "api": {
     "type": "openapi",
-    "url": "http://localhost:5003/openapi.yaml",
+    "url": "https://wordpressgpt.net/openapi.yaml",
     "is_user_authenticated": false
   },
-  "logo_url": "http://localhost:5003/logo.png",
-  "contact_email": "legal@chatgptpress.net",
-  "legal_info_url": "http://localhost:5003/legal"
+  "logo_url": "https://wordpressgpt.net/logo.png",
+  "contact_email": "kingsofthewebofficial@gmail.com",
+  "legal_info_url": "https://wordpressgpt.net/legal"
 }

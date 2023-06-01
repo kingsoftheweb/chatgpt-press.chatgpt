@@ -1,4 +1,4 @@
-# ChatGPTPress by Futrx
+# WordPressGPT by Futrx
 A ChatGPT plugin by Futrx that acts as a bridge between ChatGPT and your WordPress website.
 
 
@@ -13,7 +13,7 @@ TBD
 ## Development:
 
 #### 1. Start the docker container on local
-    docker compose --env-file .env.local up
+    sh ./spinup.sh
 
 #### 2. Commit your work, and push to the repository
     git add .
@@ -23,8 +23,8 @@ TBD
 ## Access:
 
 ### Local
-- http://localhost:5003/
+- https://wordpressgpt.net/
 
 
 ### Production
-- https://chatgptpress.ca/
+- https://chatgptpress.net/
