@@ -4,7 +4,7 @@ import jwt
 import requests
 from quart import request
 
-from globals import _SECRET, _CONF, _REDIRECT_TO
+from globals import _SECRET, _CONF
 
 from src.helpers import no_site_exception, indigest
 
