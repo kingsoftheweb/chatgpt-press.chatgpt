@@ -1,6 +1,6 @@
 openapi: 3.0.1
 info:
-  title: WordPressGPT
+  title: WordPressAI
   description: A Plugin for managing a WordPress site. You can add, get, remove WP posts.
   version: 'v1'
 servers:
