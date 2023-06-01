@@ -36,7 +36,7 @@ class Authenticate:
                 "error": "Please check your Web Address. It seems invalid."
             }
 
-        authentication_url = site + "wp-admin/authorize-application.php"
+        authentication_url = site + "/wp-admin/authorize-application.php"
         if requests.get(authentication_url).status_code == 200:
             current_timestamp = datetime.datetime.now().timestamp()
             app_name = "ChatGPTPress" + str(current_timestamp)
@@ -54,7 +54,8 @@ class Authenticate:
             res = {
                 "uid": sid,
                 "action": "You need to authenticate manually over the WordPress site."
-                          + "ChatGPT will show the Authorization link: " + login_url + " to the user."
+                          + "ChatGPT will show the Authorization link: " + login_url + " to the user."+
+                          "After login provide your username and password so ChatGPT will proceed."
             }
         else:
             res = {
@@ -66,6 +67,7 @@ class Authenticate:
         return res
 
     def get_token(self):
+        uid = None
         try:
             uid = indigest(request.args.get('uid'))["uid"]
         except:
@@ -74,16 +76,21 @@ class Authenticate:
         if not inConf: return {"error": "login link expired", "action": "Get a new login link from /login"}
         status = inConf.get("status")
         token = inConf.get("token")
-        if status and not token: return self.start()
+        #HERE SHOULD BE REQUESTED WITH USER AND PASS
+        #if status and not token: return self.start()
+        auth = (request.args.get("username"), request.args.get("appPassword"))
+        if status and not token and uid: return self.login_to_wordpress(uid,auth)
         if status and token: return {"token": inConf["token"]}
         if not status: return {"error": "Not registed yet"}
+        #HERE SHOULD BE REQUESTED WITH USER AND PASS
         return self.start()
 
-    async def login_to_wordpress(self, uid):
+    #THIS FUNCTION SHOULD USE AS DEPENDENT
+    def login_to_wordpress(self, uid, auth):
         url = "/wp-json/wp/v2/users/me"
         if not _CONF.get(uid): return "Bad or illegal Request"
         try:
-            auth = (request.args.get("username"), request.args.get("appPassword"))
+            #auth = (request.args.get("username"), request.args.get("appPassword"))
             r = requests.post(_CONF.get(uid)["site"] + url, auth=auth).json()
             if r["id"]: status = "Login successfull, please go back to GPT conversation."
             print(r["id"])
@@ -96,11 +103,7 @@ class Authenticate:
                 "author": str(r["id"])
             }
             _CONF[uid]["token"] = jwt.encode(json_payload, _SECRET, algorithm="HS256")
+            return {"token":_CONF[uid]["token"]}
         except:
             print("error login")
-            return """
-                <script>
-                    alert("Something is wrong!!! Please try again later...");
-                    window.close();
-                </script>
-            """
+            return {"Error":"Error to login the wp site. please try again later"}

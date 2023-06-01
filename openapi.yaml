@@ -36,6 +36,18 @@ paths:
           required: true
           schema:
             type: string
+        - name: username
+          in: query
+          description: the username provided by the user
+          required: true
+          schema:
+            type: string
+        - name: appPassword
+          in: query
+          description: the app password provided by the user
+          required: true
+          schema:
+            type: string
       responses:
         "200":
           description: OK
