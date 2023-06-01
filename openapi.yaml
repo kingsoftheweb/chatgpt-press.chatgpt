@@ -73,7 +73,7 @@ paths:
             type: string
         - name: postType
           in: query
-          description: The post type that will need to be retrieved. WordPress uses the term "post type" to refer to different types of content that can be created and stored in the WordPress database. By default, WordPress comes with these post types "Page", "Post" and "Attachment". You can also create your own custom post types. If "postType" is not provided, the default post type will be "post".
+          description: The type of the post that will be retrieved. WP uses the term "post type" to refer to different types of content that are in the database. If "postType" is not provided, the default will be "post".
           required: true
           schema:
             type: string
@@ -109,7 +109,7 @@ paths:
             type: string
         - name: postType
           in: query
-          description: The post type that will need to be retrieved. WordPress uses the term "post type" to refer to different types of content that can be created and stored in the WordPress database. By default, WordPress comes with these post types "Page", "Post" and "Attachment". You can also create your own custom post types. If "postType" is not provided, the default post type will be "post".
+          description: The type of the post that will be retrieved. WP uses the term "post type" to refer to different types of content that are in the database. If "postType" is not provided, the default will be "post".
           required: false
           schema:
             type: string
@@ -145,7 +145,7 @@ paths:
             type: string
         - name: status
           in: query
-          description: When this is provided, this should be used as the new or the modified/updated status for the post that should replace the old status. The status can be "publish", "draft", "pending", "private", "future", "trash", or "auto-draft".
+          description: When this is provided, it will be used as the new status for the post which will replace the old status. The status can be "publish", "draft", "pending", "private", "future", "trash", or "auto-draft".
           required: false
           schema:
             type: string
@@ -157,7 +157,7 @@ paths:
             type: number
         - name: postType
           in: query
-          description: The post type of the post that you want to update. WordPress uses the term "post type" to refer to different types of content that can be created and stored in the WordPress database. By default, WordPress comes with these post types "Page", "Post" and "Attachment". You can also create your own custom post types. If "postType" is not provided, the default post type will be "post".
+          description: The type of the post that will be updated. WP uses the term "post type" to refer to different types of content that are in the database. If "postType" is not provided, the default will be "post".
           required: true
           schema:
             type: string
