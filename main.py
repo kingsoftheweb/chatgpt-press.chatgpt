@@ -1,16 +1,13 @@
-import json
 import quart
 import quart_cors
 from quart import request
 from functools import wraps
 
-from globals import _CONF
-from src.helpers import indigest, validate_site, wp_info
+from src.helpers import indigest, validate_site
 
 from src.Authenticate import Authenticate
 from src.Posts import Posts
-from src.Plugins import Plugins
-from src.Debug import Debug
+
 
 app = quart_cors.cors(quart.Quart(__name__), allow_origin="https://chat.openai.com")
 
@@ -59,26 +56,6 @@ async def get_token_from_chat():
 @app.post("/login")
 async def login_to_chat():
     return Authenticate().start(validate_site(request.args.get("site")))
-
-"""NO NEED TO USE THIS ENDPOINT"""
-# @app.get("/login/<string:uid>")
-# async def login_to_wordpress(uid):
-#     await Authenticate().login_to_wordpress(uid)
-#     if _CONF.get(uid):
-#         return """
-#             <h6>Login successfull. Please go back to chatGPT and continue your conversation.</h6>
-#             <script>
-#                 window.close();
-#             </script>
-#         """
-#     else:
-#         return """
-#         <script>
-#                 alert("Something is wrong!!! Please try again later...");
-#                 window.close();
-#             </script>
-#         """
-
 
 def logged():
     def wrapper(func):
