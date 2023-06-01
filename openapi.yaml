@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
-  title: WordPressAI
-  description: A Plugin for managing a WordPress site. You can add, get, remove WP posts.
+  title: WordPressGPT
+  description: Manages a WordPress site. You can add, get, remove WP posts.
   version: 'v1'
 servers:
   - url: https://wordpressgpt.net
@@ -9,14 +9,14 @@ paths:
   /login:
     post:
       operationId: loginAuth
-      summary: Get the authentication uid from here. User must provide the WordPress site address, so ChatGPT can provide an authorization url to the user to login to the WordPress site and get the uid.
+      summary: Get the authentication uid from here. User must provide the WordPress site address, to provide an authorization url to the user to login to the WordPress site and get the uid.
       parameters:
         - name: site
           in: query
           schema:
             type: string
           required: true
-          description: ChatGPT must not generate it and must be provided by the user. ChatGPT should save this value and use it in the future for any requests to the WordPress site.
+          description: This must not be generated and must be provided by the user. This value should be saved to be used in the future for any requests to the WordPress site.
       responses:
         "200":
           description: OK
@@ -31,19 +31,19 @@ paths:
       parameters:
         - name: uid
           in: query
-          description: The authentication uid that ChatGPT got from the /login endpoint.
+          description: The authentication uid that was retrieved from the /login endpoint.
           required: true
           schema:
             type: string
         - name: username
           in: query
-          description: The username provided by the user, and will be used to login to the WordPress site. If the user does not provide the username, ChatGPT will ask them to provide it.
+          description: The username provided by the user, and will be used to login to the WordPress site. If the user does not provide the username, user will be asked to provide it.
           required: true
           schema:
             type: string
         - name: appPassword
           in: query
-          description: The application password provided by the user, and will be used to login to the WordPress site. If the user does not provide the application password, ChatGPT will ask them to provide it.
+          description: The application password provided by the user, and will be used to login to the WordPress site. If the user does not provide the application password, user will be asked to provide it.
           required: true
           schema:
             type: string
@@ -236,7 +236,7 @@ components:
       properties:
         token:
           type: string
-          description: The token that will be used in all next requests made by ChatGPT to the WordPress site, after the user has logged in successfully.
+          description: The token that will be used in all next requests made to the WordPress site, after the user has logged in successfully.
     tokenResponse:
       type: object
       properties:

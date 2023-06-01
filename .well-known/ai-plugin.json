@@ -1,9 +1,9 @@
 {
   "schema_version": "v1",
-  "name_for_human": "WordPressAI",
-  "name_for_model": "WordPressAI",
-  "description_for_human": "A Plugin for managing a Wordpress site, you can add, update, delete posts.",
-  "description_for_model": "A Plugin for managing a WordPress site: This plugin allows you to efficiently manage your WordPress website by providing functionalities such as adding, retrieving, and removing WordPress posts. When adding post content, it ensures that the HTML code for JSON is properly formatted to avoid any parsing errors. To ensure security, the AI model does not generate any website addresses for the \"/login\" endpoint. Instead, it prompts users to input their WordPress site address. If users are not logged in, the plugin displays a unique login link from the \"/login\" endpoint. The plugin ensures that the same login link is not shown more than once. Upon successful login, the plugin retrieves the refreshed authentication token using the last user ID (UID) obtained. It always utilizes the most recent UID and token available.",
+  "name_for_human": "WordPressGPT",
+  "name_for_model": "WordPressGPT",
+  "description_for_human": "Manage a WordPress site. You can add, get, remove WP posts.",
+  "description_for_model": "Manage a WordPress site: This will allows you to efficiently manage your WordPress website by providing functionalities such as adding, retrieving, and removing WordPress posts. When adding post content, it ensures that the HTML code for JSON is properly formatted to avoid any parsing errors. To ensure security, the AI model does not generate any website addresses for the \"/login\" endpoint. Instead, it prompts users to input their WordPress site address. If users are not logged in, display a unique login link from the \"/login\" endpoint. Make sure that the same login link is not shown more than once. Upon successful login, retrieve the refreshed authentication token using the last user ID (UID) obtained. It always utilizes the most recent UID and token available.",
 
   "auth": {
     "type": "none"

@@ -1,4 +1,4 @@
-# WordPressAI by Futrx
+# WordPressGPT by Futrx
 A ChatGPT plugin by Futrx that acts as a bridge between ChatGPT and your WordPress website.
 
 
