@@ -36,7 +36,7 @@ class Authenticate:
                 "error": "Please check your Web Address. It seems invalid."
             }
 
-        authentication_url = site + "/wp-admin/authorize-application.php"
+        authentication_url = site + "wp-admin/authorize-application.php"
         if requests.get(authentication_url).status_code == 200:
             current_timestamp = datetime.datetime.now().timestamp()
             app_name = "ChatGPTPress" + str(current_timestamp)
