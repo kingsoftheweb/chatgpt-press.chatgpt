@@ -57,13 +57,14 @@ async def get_token_from_chat():
 async def login_to_chat():
     return Authenticate().start(validate_site(request.args.get("site")))
 
-def logged():
+def req_validator():
     def wrapper(func):
         @wraps(func)
         async def wrapped(*args, **kwargs):
             token = kwargs["token"]
+            ind = indigest(token)
+            if ind.get("error"): return {"error":"Please start by giving your site address so we can proceed."}
             try:
-                ind = indigest(token)
                 uid = ind["uid"]
                 usr = ind["user"]
                 password = ind["pass"]
@@ -86,33 +87,35 @@ def logged():
 # POSTS ################
 ########################
 @app.get("/posts/<string:token>")
+@req_validator()
 async def get_posts(token):
     res = await Posts().get_posts(token)
     return quart.Response(response=res, status=200)
 
 
 @app.post("/posts/<string:token>")
+@req_validator()
 async def get_post_details(token):
     res = await Posts().get_post_details(token)
     return quart.Response(response=res, status=200)
 
 
 @app.post("/addPost/<string:token>")
-@logged()
+@req_validator()
 async def add_new_post(token):
     res = await Posts().add_new(token)
     return quart.Response(response=res, status=200)
 
 
 @app.post("/updatePost/<string:token>")
-@logged()
+@req_validator()
 async def update_post(token):
     res = await Posts().update(token)
     return quart.Response(response=res, status=200)
 
 
 @app.post("/deletePost/<string:token>/<string:postId>")
-@logged()
+@req_validator()
 async def delete_post(token, postId):
     res = await Posts().delete(token, postId)
     return quart.Response(response=res, status=200)
