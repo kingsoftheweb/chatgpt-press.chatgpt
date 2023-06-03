@@ -30,11 +30,16 @@ class Authenticate:
             return no_site_exception()
         uid = str(uuid.uuid1())
 
-        r = requests.get(site)
-        if r.status_code != 200:
+        try:
+            r = requests.get(site)
+            if r.status_code != 200:
+                return {
+                    "error": "Please check your Web Address. It seems invalid."
+                }
+        except:
             return {
-                "error": "Please check your Web Address. It seems invalid."
-            }
+                    "error": "Please check your Web Address. It seems invalid."
+                }
         # We should put the / before wp-admin/ because the site variable
         # is comming without a ending /
         authentication_url = site +"/"+"wp-admin/authorize-application.php"
