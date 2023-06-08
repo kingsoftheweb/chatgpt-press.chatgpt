@@ -38,11 +38,15 @@ class Authenticate:
                 }
         except:
             return {
-                    "error": "Please check your Web Address. It seems invalid."
-                }
-        # We should put the / before wp-admin/ because the site variable
-        # is comming without a ending /
-        authentication_url = site +"/"+"wp-admin/authorize-application.php"
+                "error": "Please check your Web Address. It seems invalid."
+            }
+        # We should put the / before wp-admin/ (when it does not exist) because the site variable
+        # is coming without a ending /
+        if site[-1] == "/":
+            authentication_url = site + "wp-admin/authorize-application.php"
+        else:
+            authentication_url = site + "/wp-admin/authorize-application.php"
+
         if requests.get(authentication_url).status_code == 200:
             current_timestamp = datetime.datetime.now().timestamp()
             app_name = "ChatGPTPress" + str(current_timestamp)
