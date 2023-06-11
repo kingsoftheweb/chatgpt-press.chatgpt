@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
   title: Wordpress Genie
-  description: Manages a WordPress site. You can get, view details WP posts.
+  description: Manages a WordPress site. You can get, view and analyze details of WordPress posts and content.
   version: 'v1'
 servers:
   - url: https://wordpressgpt.net
@@ -12,7 +12,7 @@ paths:
       summary: Get the details of specific post by its ID.
       parameters:
         - name: site
-          description: chatGPT should not generate any automatic or example address if user does not provide this wordpress site address.
+          description: ChatGPT should not generate any automatic or example address if user does not provide their wordpress site address.
           in: query
           schema:
             type: string
@@ -42,7 +42,7 @@ paths:
       parameters:
         - in: query
           name: site
-          description: chatGPT should not generate any automatic or example address if user does not provide this wordpress site address.
+          description: ChatGPT should not generate any automatic or example address if user does not provide this wordpress site address.
           schema:
             type: string
           required: true
