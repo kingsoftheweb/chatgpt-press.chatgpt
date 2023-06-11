@@ -10,7 +10,7 @@
   },
   "api": {
     "type": "openapi",
-    "url": "https://wordpressgpt.net.yaml"
+    "url": "https://wordpressgpt.net/openapi.yaml"
   },
   "logo_url": "https://wordpressgpt.net/logo.png",
   "contact_email": "kingsofthewebofficial@gmail.com",
