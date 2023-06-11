@@ -20,20 +20,20 @@ class Posts:
 
     async def get_post_details(self):
         site = validate_site(request.args.get('site'))
-        if(site.get("error")): return site
+        if(site.get("error")): return json.dumps(site)
         postType = request.args.get('postType')
         postType = valid_post_type(postType)
         if request.args.get('postId'):
-            url = site + "/wp-json/wp/v2/" + postType + "/" + request.args.get('postId')
+            url = site["site"] + "/wp-json/wp/v2/" + postType + "/" + request.args.get('postId')
             r = requests.get(url)
             return json.dumps(r.json())
 
     async def get_posts(self):
         site = validate_site(request.args.get('site'))
-        if(site.get("error")): return site
+        if(site.get("error")): return json.dumps(site)
         postType = request.args.get('postType') or request.args.get('type')
         postType = valid_post_type(postType)
-        url = site + "/wp-json/wp/v2/" + postType
+        url = site["site"] + "/wp-json/wp/v2/" + postType
         # if request.args.get('postType'): url = token["site"] + '/wp-json/wp/v2/' + request.args.get('postType') + "?"
         url += "?_fields=id,date,link&per_page=10"
         after = request.args.get('afterDate')
