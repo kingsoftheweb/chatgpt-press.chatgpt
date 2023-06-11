@@ -1,66 +1,19 @@
 openapi: 3.0.1
 info:
   title: Wordpress Genie
-  description: Manages a WordPress site. You can add, get, remove WP posts.
+  description: Manages a WordPress site. You can get, view details WP posts.
   version: 'v1'
 servers:
   - url: https://wordpressgpt.net
 paths:
-  /login:
-    post:
-      operationId: loginAuth
-      summary: Get the authentication uid from here. User must provide the WordPress site address, so ChatGPT can provide an authorization url to the user to login to the WordPress site and get the uid.
-      parameters:
-        - name: site
-          in: query
-          schema:
-            type: string
-          required: true
-          description: ChatGPT must not generate it and must be provided by the user. ChatGPT should save this value and use it in the future for any requests to the WordPress site.
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                  $ref: '#/components/schemas/loginResponse'
-  /token:
-    post:
-      operationId: getToken
-      summary: Get the authentication token to be used in the future requests to the WordPress site. This will make the requests to the WordPress site authenticated.
-      parameters:
-        - name: uid
-          in: query
-          description: The authentication uid that ChatGPT got from the /login endpoint.
-          required: true
-          schema:
-            type: string
-        - name: username
-          in: query
-          description: The username provided by the user, and will be used to login to the WordPress site. If the user does not provide the username, ChatGPT will ask them to provide it.
-          required: true
-          schema:
-            type: string
-        - name: appPassword
-          in: query
-          description: The application password provided by the user, and will be used to login to the WordPress site. If the user does not provide the application password, ChatGPT will ask them to provide it.
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/tokenResponse'
-  /posts/{token}:
+  /posts:
     post:
       operationId: getPostDetails
       summary: Get the details of specific post by its ID.
       parameters:
-        - name: token
-          in: path
+        - name: site
+          description: The wp site name
+          in: query
           schema:
             type: string
           required: true
@@ -83,13 +36,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/getPostDetailsResponse'
-
     get:
       operationId: getPosts
       summary: Get list of the requested posts from the WordPress site.
       parameters:
-        - in: path
-          name: token
+        - in: query
+          name: site
+          description: The wp site name
           schema:
             type: string
           required: true
@@ -119,154 +72,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/getListResponse'
-  /updatePost/{token}:
-    post:
-      operationId: updatePost
-      summary: Update an existed post that already exists in the WordPress site. This can be used to update the title, content, status, or any other information of the post.
-      parameters:
-        - in: path
-          name: token
-          schema:
-            type: string
-          required: true
-          description: This endpoint is protected, and will need that you use the token you already retrieved earlier from the /token endpoint.
-        - name: title
-          in: query
-          description: When this is provided, this should be used as the new or the modified/updated title for the post that should replace the old title.
-          required: false
-          schema:
-            type: string
-        - name: content
-          in: query
-          description: When this is provided, this should be used as the new or the modified/updated content for the post that should replace the old content.
-          required: false
-          schema:
-            type: string
-        - name: status
-          in: query
-          description: When this is provided, it will be used as the new status for the post which will replace the old status. The status can be "publish", "draft", "pending", "private", "future", "trash", or "auto-draft".
-          required: false
-          schema:
-            type: string
-        - name: post_id
-          in: query
-          description: This is the unique ID for the specific post that you want to update. This is required and must be provided.
-          required: true
-          schema:
-            type: number
-        - name: postType
-          in: query
-          description: The type of the post that will be updated. WP uses the term "post type" to refer to different types of content that are in the database. If "postType" is not provided, the default will be "post".
-          required: true
-          schema:
-            type: string
-        
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/updatePostResponse'
-  /addPost/{token}:
-    post:
-      operationId: addPost
-      summary: add a new post to wp
-      parameters:
-      - in: path
-        name: token
-        schema:
-            type: string
-        required: true
-        description: use the token you already got after login from /token endpoint
-      - name: postType
-        in: query
-        description: type or category of the post
-        required: true
-        schema:
-          type: string
-      requestBody:
-        required: true
-        content: 
-          application/json:
-            schema:
-              $ref: '#/components/schemas/addPostData'
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/addPostResponse'
-  /deletePost/{token}/{postId}:
-    post:
-      operationId: deletePost
-      summary: delete specifc post
-      parameters:
-        - in: path
-          name: postId
-          schema:
-              type: string
-          required: true
-          description: specific post id that will be removed
-        - in: path
-          name: token
-          schema:
-              type: string
-          required: true
-          description: use the token you already got after login from /token endpoint
-        - name: postType
-          in: query
-          description: type or category of the post
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/deletePostResponse'
-
+  
 components:
   schemas:
-    loginResponse:
-      type: object
-      properties:
-        token:
-          type: string
-          description: The token that will be used in all next requests made by ChatGPT to the WordPress site, after the user has logged in successfully.
-    tokenResponse:
-      type: object
-      properties:
-        token:
-          type: string
-    addPostData:
-      type: object
-      properties:
-        title:
-          type: string
-          description: Title for the new post that will be added.
-        content:
-          type: string
-          description: HTML format post body that will be added to the new post.
-    updatePostResponse:
-      type: object
-      properties:
-        list:
-          type: array
-          items:
-            postDetails: string
-          description: The post that has been updated successfully.
-    addPostResponse:
-      type: object
-      properties:
-        list:
-          type: array
-          items:
-            postDetails: string
-          description: Post details that have been added successfully.
     getListResponse:
       type: object
       properties:
@@ -281,8 +89,3 @@ components:
         response:
           type: object
           description: Post details.
-    deletePostResponse:
-      type: object
-      properties:
-        description:
-          type: object
