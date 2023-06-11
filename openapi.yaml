@@ -4,7 +4,7 @@ info:
   description: Manages a WordPress site. You can get, view details WP posts.
   version: 'v1'
 servers:
-  - url: https://wordpressgpt.net
+  - url: http://localhost:5003
 paths:
   /posts:
     post:
@@ -12,7 +12,7 @@ paths:
       summary: Get the details of specific post by its ID.
       parameters:
         - name: site
-          description: The wp site name
+          description: chatGPT should not generate any automatic or example address if user does not provide this wordpress site address.
           in: query
           schema:
             type: string
@@ -42,11 +42,10 @@ paths:
       parameters:
         - in: query
           name: site
-          description: The wp site name
+          description: chatGPT should not generate any automatic or example address if user does not provide this wordpress site address.
           schema:
             type: string
           required: true
-          description: This endpoint is protected (needs authentication), and will need that you use the token you already retrieved earlier from the /token endpoint.
         - name: afterDate
           in: query
           description: Get list of posts that were published after a specific date.
@@ -72,17 +71,15 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/getListResponse'
-  
+
 components:
   schemas:
     getListResponse:
       type: object
       properties:
         response:
-          type: array
-          items:
-            post: string
-          description: The list of posts that have been retrieved successfully.
+          type: object
+          description: Post details.
     getPostDetailsResponse:
       type: object
       properties:
