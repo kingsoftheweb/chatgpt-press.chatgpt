@@ -2,7 +2,7 @@
   "schema_version": "v1",
   "name_for_human": "WordpressGenie",
   "name_for_model": "WordpressGenie",
-  "description_for_human": "Manage a WordPress site. You can get or view details WP posts.",
+  "description_for_human": "Manages a WordPress site. You can get, view and analyze details of WordPress posts and content.",
   "description_for_model": "Manage a WordPress site: This will allows you to efficiently manage your WordPress website by providing functionalities such as retrieving, and get details of WordPress posts. To ensure security, the AI model does not generate any website addresses for the site param. Instead, it prompts users to input their WordPress site address.",
 
   "auth": {
