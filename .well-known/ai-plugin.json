@@ -6,11 +6,15 @@
   "description_for_model": "Manage a WordPress site: This will allows you to efficiently manage your WordPress website by providing functionalities such as retrieving, and get details of WordPress posts. When adding post content, it ensures that the HTML code for JSON is properly formatted to avoid any parsing errors. To ensure security, the AI model does not generate any website addresses for the site param. Instead, it prompts users to input their WordPress site address.",
 
   "auth": {
-    "type": "none"
-  },
+    "type": "service_http",
+    "authorization_type": "bearer",
+    "verification_tokens": {
+        "openai": "235s7dskbk1fd3223b232121dafsf3a03xxwe234"
+    }
+},
   "api": {
     "type": "openapi",
-    "url": "https://wordpressgpt.net.yaml"
+    "url": "https://wordpressgpt.net/openapi.yaml"
   },
   "logo_url": "https://wordpressgpt.net/logo.png",
   "contact_email": "kingsofthewebofficial@gmail.com",
