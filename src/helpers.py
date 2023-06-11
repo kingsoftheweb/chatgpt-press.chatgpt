@@ -1,24 +1,4 @@
-import jwt
-from globals import _SECRET
-
-
-def indigest(token):
-    try:
-        return jwt.decode(token, _SECRET, verify_exp=True, algorithms=["HS256"])
-    except:
-        return {
-            "error": "The request session has been expired. please give your wp site address to start again."
-        }
-
-
-def no_site_exception():
-    return {
-        "error": "provide you wp site address to continue."
-    }
-
-
-def login_error_exception():
-    return {"error": "login failed. please try again."}
+import requests
 
 
 def validate_site(site_url):
@@ -27,6 +7,17 @@ def validate_site(site_url):
         site_url = site_url.replace("http://", "https://")
     elif not site_url.startswith("https://"):
         site_url = "https://" + site_url
+    
+    try:
+        r = requests.get(site_url)
+        if r.status_code != 200:
+            return {
+                "error": "Please check your Web Address. It seems invalid wordpress website."
+            }
+    except:
+        return {
+            "error": "Please check your Web Address. It seems invalid."
+        }
     return site_url
 
 
