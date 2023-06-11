@@ -4,7 +4,7 @@ info:
   description: Manages a WordPress site. You can get, view details WP posts.
   version: 'v1'
 servers:
-  - url: http://localhost:5003
+  - url: https://wordpressgpt.net
 paths:
   /posts:
     post:
