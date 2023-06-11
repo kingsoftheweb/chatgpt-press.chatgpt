@@ -1,2 +1,3 @@
 _SECRET = "as7dskbk1b232121039021390218cbjaksbkjk321k3b12"
 _CONF = {}
+_SERVICE_AUTH_KEY = "235s7dskbk1fd3223b232121dafsf3a03xxwe234"
