@@ -46,14 +46,14 @@ async def legal_docs():
 # POSTS ################
 ########################
 @app.get("/posts")
-async def get_posts(token):
-    res = await Posts().get_posts(token)
+async def get_posts():
+    res = await Posts().get_posts()
     return quart.Response(response=res, status=200)
 
 
 @app.post("/posts")
-async def get_post_details(token):
-    res = await Posts().get_post_details(token)
+async def get_post_details():
+    res = await Posts().get_post_details()
     return quart.Response(response=res, status=200)
 
 
