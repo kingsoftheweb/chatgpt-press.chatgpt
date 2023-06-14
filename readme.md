@@ -1,4 +1,4 @@
-# Wordpress Genie by Futrx
+# WPress Genie by Futrx
 A ChatGPT plugin by Futrx that acts as a bridge between ChatGPT and your WordPress website.
 
 
@@ -23,7 +23,7 @@ TBD
 ## Access:
 
 ### Local
-- https://wordpressgpt.net/
+- https://chatgptapi.wpressgenie.com/
 
 
 ### Production

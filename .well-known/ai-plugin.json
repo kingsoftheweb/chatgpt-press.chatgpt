@@ -1,7 +1,7 @@
 {
   "schema_version": "v1",
-  "name_for_human": "WordpressGenie",
-  "name_for_model": "WordpressGenie",
+  "name_for_human": "WPress Genie",
+  "name_for_model": "WPress Genie",
   "description_for_human": "Manages a WordPress site. You can get, view and analyze details of WordPress posts and content.",
   "description_for_model": "Manage a WordPress site: This will allows you to efficiently manage your WordPress website by providing functionalities such as retrieving, and get details of WordPress posts. To ensure security, the AI model does not generate any website addresses for the site param. Instead, it prompts users to input their WordPress site address.",
 
@@ -10,9 +10,9 @@
   },
   "api": {
     "type": "openapi",
-    "url": "https://wordpressgpt.net/openapi.yaml"
+    "url": "https://chatgptapi.wpressgenie.com/openapi.yaml"
   },
-  "logo_url": "https://wordpressgpt.net/logo.png",
+  "logo_url": "https://chatgptapi.wpressgenie.com/logo.png",
   "contact_email": "kingsofthewebofficial@gmail.com",
-  "legal_info_url": "https://wordpressgpt.net/legal"
+  "legal_info_url": "https://chatgptapi.wpressgenie.com/legal"
 }

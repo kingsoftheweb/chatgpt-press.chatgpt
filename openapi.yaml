@@ -1,10 +1,10 @@
 openapi: 3.0.1
 info:
-  title: Wordpress Genie
+  title: WPress Genie
   description: Manages a WordPress site. You can get, view and analyze details of WordPress posts and content.
   version: 'v1'
 servers:
-  - url: https://wordpressgpt.net
+  - url: https://chatgptapi.wpressgenie.com
 paths:
   /posts:
     post:
